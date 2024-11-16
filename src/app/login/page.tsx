@@ -11,7 +11,7 @@ const Page = ({ session }: { session: string | null }) => {
   const userSessionId = useUserSession(session);
 
   const handleSignIn = async () => {
-    // if (userSessionId != null) return ;
+    if (userSessionId != null) return;
 
     const userUid = await signInWithGoogle();
     if (userUid) {
