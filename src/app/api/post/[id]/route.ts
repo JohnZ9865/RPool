@@ -7,6 +7,7 @@ import {
   RidePostingObject,
 } from "../../types/post";
 import { UserDocumentObject } from "../../types/user";
+import { ExpectedInputAddPostInput } from "../add/route";
 
 const getIDFromURL = (url: string) => {
   const urlParts = url.split("/");
@@ -80,7 +81,7 @@ export const PUT = async (req: NextRequest) => {
 
   try {
     const postId = getIDFromURL(req.url);
-    const input: Partial<RidePostingObject> = await req.json();
+    const input: Partial<ExpectedInputAddPostInput> = await req.json();
 
     const postRef = doc(db, POST_COLLECTION, postId);
     await updateDoc(postRef, input);
