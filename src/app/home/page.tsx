@@ -39,30 +39,32 @@ const Page = () => {
   }, []);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       {/* Top Header with Gradient Background */}
       <AppBar
         position="static"
         sx={{
-          background: "linear-gradient(to right, #1976d2, #FFEB3B)", // Blue to Yellow gradient
-          color: "white", // White text
-          fontFamily: "'Roboto', sans-serif", // Set a nice font from Google Fonts
+          background: 'linear-gradient(to right, #1976d2, #FFEB3B)',  // Blue to Yellow gradient
+          color: 'white',  // White text
+          fontFamily: "'Roboto', sans-serif",  // Set a nice font from Google Fonts
         }}
       >
-        <Toolbar
-          sx={{ display: "flex", justifyContent: "center", width: "100%" }}
-        >
-          {/* Title centered with larger font size */}
-          <Typography
-            variant="h4"
-            sx={{ textAlign: "center", fontWeight: "bold" }}
-          >
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+          {/* Title centered */}
+          <Typography variant="h4" sx={{ textAlign: 'center', fontWeight: 'bold', flexGrow: 1 }}>
             R' Pool
           </Typography>
 
-          {/* Profile Icon linking to account page */}
+          {/* Profile Icon linked to the account page with padding around it */}
           <Link href="/account" passHref>
-            <IconButton sx={{ color: "white", ml: 2 }} aria-label="account">
+            <IconButton 
+              sx={{ 
+                color: 'white', 
+                padding: '8px', 
+                marginRight: '30px'  
+              }} 
+              aria-label="account"
+            >
               <AccountCircleIcon />
             </IconButton>
           </Link>
@@ -70,26 +72,11 @@ const Page = () => {
       </AppBar>
 
       {/* Main Content */}
-      <Box
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {}
-        <Timecard
-          origin={origin}
-          destination={destination}
-          availableSeats={availableSeats}
-          date={date}
-          time={time}
-          price={price}
-        />
+      <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        {/* This section is blank for now */}
       </Box>
     </Box>
   );
-};
+}
 
 export default Page;
