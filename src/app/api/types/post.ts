@@ -6,7 +6,8 @@ export const POST_COLLECTION = "posts";
 
 export const getRidePostDocument = (id: string) => `${POST_COLLECTION}/${id}`;
 
-export interface PopulatedPostingObject extends Omit<RidePostingObject, "owner" | "usersInRide"> {
+export interface PopulatedPostingObject
+  extends Omit<RidePostingObject, "owner" | "usersInRide"> {
   owner: UserDocumentObject;
   usersInRide: UserDocumentObject[];
 }
