@@ -9,14 +9,8 @@ import {
   Avatar,
   Typography,
 } from "@mui/material";
-import {
-  Box,
-  TextField,
-  Button,
-  IconButton,
-  Avatar,
-  Typography,
-} from "@mui/material";
+import Link from "next/link";
+
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
