@@ -93,13 +93,14 @@ export interface UberServiceData {
 }
 
 export interface ServicePriceInfo {
-  basePrice: number;          // initial_charge
-  totalFare: number;          // total_fare
-  priceRange?: {             // for services with price ranges
+  basePrice: number; // initial_charge
+  totalFare: number; // total_fare
+  priceRange?: {
+    // for services with price ranges
     low: number | null;
     high: number | null;
   };
-  minimumCharge: number;      // minimum_charge
+  minimumCharge: number; // minimum_charge
   extraCharges: {
     explanation: string;
     amount: number;

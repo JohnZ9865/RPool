@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getEstimation, getServiceSummary } from "./util";
 
 export interface MyGeoPoint {
-  latitude: number; longitude: number ;
+  latitude: number;
+  longitude: number;
 }
 
 interface ExpectedInput {
@@ -16,9 +17,13 @@ export const POST = async (req: NextRequest) => {
   try {
     const input: ExpectedInput = await req.json();
 
-    const priceEstimation = await getEstimation(input.originLocation, input.destinationLocation);
+    const priceEstimation = await getEstimation(
+      input.originLocation,
+      input.destinationLocation,
+    );
 
-    const serviceSummaries = priceEstimation.fare_estimates.map(getServiceSummary);
+    const serviceSummaries =
+      priceEstimation.fare_estimates.map(getServiceSummary);
 
     return res.json({ message: "OK", serviceSummaries }, { status: 200 });
   } catch (err) {
@@ -28,4 +33,3 @@ export const POST = async (req: NextRequest) => {
     );
   }
 };
- 
