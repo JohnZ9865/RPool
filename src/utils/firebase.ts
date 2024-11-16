@@ -9,7 +9,15 @@ import {
   getRedirectResult,
   onAuthStateChanged as _onAuthStateChanged,
 } from "firebase/auth";
-import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  query,
+  getDocs,
+  where,
+} from "firebase/firestore";
 
 // Your Firebase configuration
 const firebaseConfig = {
@@ -39,6 +47,19 @@ export function onAuthStateChanged(callback: (authUser: User | null) => void) {
   return _onAuthStateChanged(firebaseAuth, callback);
 }
 
+export const doesEmailExist = async (targetEmail: string): Promise<boolean> => {
+  try {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", targetEmail));
+    const querySnapshot = await getDocs(q);
+
+    return !querySnapshot.empty; // Return true if at least one document matches
+  } catch (error) {
+    console.error("Error checking email existence:", error);
+    return false; // Handle gracefully
+  }
+};
+
 //pop up version:
 export async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
@@ -48,7 +69,13 @@ export async function signInWithGoogle() {
     if (!result || !result.user) {
       throw new Error("Google sign in failed");
     }
-    console.log("firebase ts signinwith google", result, "end results");
+    const targetEmail = result.user.email;
+    const existness = await doesEmailExist(targetEmail);
+    console.log("sign in with google firebase.ts", existness, "end existness");
+
+    if (existness) {
+    } else {
+    }
 
     return result.user.uid;
   } catch (error) {
