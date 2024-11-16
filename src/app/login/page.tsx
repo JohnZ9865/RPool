@@ -9,10 +9,11 @@ import GoogleIcon from "@mui/icons-material/Google";
 import { join } from "path/win32";
 
 const Page = ({ session }: { session: string | null }) => {
-  const userSessionId = useUserSession(session);
+  const userSessionId = useUserSession(session).userUid;
+
+  console.log("firestore id", useUserSession(session));
 
   const handleSignIn = async () => {
-    console.log("\n\n\n\ngoogle sign in is failing!!!1");
     if (userSessionId != null) return;
 
     const userUid = await signInWithGoogle();
