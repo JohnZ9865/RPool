@@ -12,7 +12,7 @@ export interface RidePostingObject {
   departureTime: Timestamp;
   arrivalTime?: Timestamp;
   totalCost: number;
-  totalSeats: number
-  usersInRide: DocumentReference[]
+  totalSeats: number;
+  usersInRide: DocumentReference[];
   notes?: string;
 }
