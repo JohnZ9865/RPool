@@ -20,7 +20,6 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-
 const ProfilePage = () => {
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
@@ -60,11 +59,10 @@ const ProfilePage = () => {
         }}
       >
         <Link href="/home">
-        <IconButton color="primary">
-          <ArrowBackIcon />
-        </IconButton>
+          <IconButton color="primary">
+            <ArrowBackIcon />
+          </IconButton>
         </Link>
-       
       </Box>
 
       {/* Profile Picture */}
@@ -199,16 +197,16 @@ const ProfilePage = () => {
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: 3,
-                borderColor: "black", 
+                borderColor: "black",
               },
               "& .MuiInputLabel-root": {
-                color: "black", 
+                color: "black",
               },
               "& .MuiOutlinedInput-input": {
-                color: "black", 
+                color: "black",
               },
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "black", 
+                borderColor: "black",
               },
               "& .MuiInputBase-input::placeholder": {
                 color: "black",
