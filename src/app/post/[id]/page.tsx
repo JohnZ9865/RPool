@@ -13,6 +13,7 @@ import {
   Paper,
   ThemeProvider,
   createTheme,
+  LinearProgress,
 } from "@mui/material";
 import {
   LocationOn,
@@ -22,7 +23,8 @@ import {
   Notes,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
-import { POST_COLLECTION } from "@/app/api/types/post";
+import { PopulatedPostingObject, POST_COLLECTION } from "@/app/api/types/post";
+import { api } from "@/utils/api";
 
 // Create custom styled components
 const IconWrapper = styled(Box)(({ theme }) => ({
@@ -38,49 +40,27 @@ const LocationWrapper = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(3),
 }));
 
-// Define types for the ride data
-interface RideData {
-  title: string;
-  originLocation: {
-    latitude: number;
-    longitude: number;
-  };
-  destinationLocation: {
-    latitude: number;
-    longitude: number;
-  };
-  departureTime: {
-    seconds: number;
-  };
-  arrivalTime: {
-    seconds: number;
-  };
-  totalCost: number;
-  totalSeats: number;
-  notes: string;
-}
+const RideDetails = ({ params }: { params: { id: string } }) => {
+  console.log(params);
+  const [ridePost, setRidePost] = useState<PopulatedPostingObject | undefined>(undefined);
 
-const RideDetails = ({ rideId }) => {
-  const rideData: RideData = {
-    title: "SF to LA",
-    originLocation: {
-      latitude: 37.7749,
-      longitude: -122.4194,
-    },
-    destinationLocation: {
-      latitude: 34.0522,
-      longitude: -118.2437,
-    },
-    departureTime: {
-      seconds: 1710954000,
-    },
-    arrivalTime: {
-      seconds: 1710975600,
-    },
-    totalCost: 45,
-    totalSeats: 4,
-    notes: "Direct route, 2 stops for breaks",
+  const fetchRidePost = async () => {
+    try {
+      const ridePost = await api({
+        method: "GET",
+        url: `/api/post/${params.id}`,
+      });
+      setRidePost(ridePost.postDoc);
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  console.log(ridePost);
+
+  useEffect(() => {
+    fetchRidePost();
+  }, []);
 
   // Create theme with custom colors
   const theme = createTheme({
@@ -106,6 +86,10 @@ const RideDetails = ({ rideId }) => {
     });
   };
 
+  if (!ridePost) {
+    return <LinearProgress />
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ maxWidth: 800, margin: "auto", p: 2 }}>
@@ -121,11 +105,11 @@ const RideDetails = ({ rideId }) => {
               }}
             >
               <Typography variant="h4" component="h1" gutterBottom>
-                {rideData.title}
+                {ridePost.title}
               </Typography>
               <Chip
                 icon={<Group />}
-                label={`${rideData.totalSeats} seats total`}
+                label={`${ridePost.totalSeats} seats total`}
                 color="primary"
                 variant="outlined"
               />
@@ -137,14 +121,14 @@ const RideDetails = ({ rideId }) => {
                 <LocationOn color="success" />
                 <Box>
                   <Typography variant="subtitle2" color="textSecondary">
-                    Departure
+                    Origin
                   </Typography>
                   <Typography variant="body1" fontWeight="medium">
-                    San Francisco
+                    {ridePost.originName}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    {rideData.originLocation.latitude}°N,{" "}
-                    {rideData.originLocation.longitude}°W
+                    {ridePost.originLocation.latitude}°N,{" "}
+                    {ridePost.originLocation.longitude}°W
                   </Typography>
                 </Box>
               </LocationWrapper>
@@ -156,11 +140,11 @@ const RideDetails = ({ rideId }) => {
                     Destination
                   </Typography>
                   <Typography variant="body1" fontWeight="medium">
-                    Los Angeles
+                    {ridePost.destinationName}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    {rideData.destinationLocation.latitude}°N,{" "}
-                    {rideData.destinationLocation.longitude}°W
+                    {ridePost.destinationLocation.latitude}°N,{" "}
+                    {ridePost.destinationLocation.longitude}°W
                   </Typography>
                 </Box>
               </LocationWrapper>
@@ -176,7 +160,7 @@ const RideDetails = ({ rideId }) => {
                       Departure
                     </Typography>
                     <Typography variant="body1" fontWeight="medium">
-                      {formatDateTime(rideData.departureTime.seconds)}
+                      {formatDateTime(ridePost.departureTime.seconds)}
                     </Typography>
                   </Box>
                 </IconWrapper>
@@ -189,7 +173,7 @@ const RideDetails = ({ rideId }) => {
                       Arrival
                     </Typography>
                     <Typography variant="body1" fontWeight="medium">
-                      {formatDateTime(rideData.arrivalTime.seconds)}
+                      {formatDateTime(ridePost.arrivalTime.seconds)}
                     </Typography>
                   </Box>
                 </IconWrapper>
@@ -204,7 +188,7 @@ const RideDetails = ({ rideId }) => {
                   Total Cost
                 </Typography>
                 <Typography variant="body1" fontWeight="medium">
-                  ${rideData.totalCost}
+                  ${ridePost.totalCost}
                 </Typography>
               </Box>
             </IconWrapper>
@@ -217,7 +201,7 @@ const RideDetails = ({ rideId }) => {
                   Notes
                 </Typography>
                 <Typography variant="body1" fontWeight="medium">
-                  {rideData.notes}
+                  {ridePost.notes}
                 </Typography>
               </Box>
             </IconWrapper>
