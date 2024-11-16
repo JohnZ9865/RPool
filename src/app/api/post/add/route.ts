@@ -18,6 +18,7 @@ import { POST_COLLECTION } from "../../types/post";
 
 interface ExpectedInput {
   ownerId: string;
+  title: string
   originLocation: { latitude: number; longitude: number };
   destinationLocation: { latitude: number; longitude: number };
   departureTime: string;
@@ -49,6 +50,7 @@ export const POST = async (req: NextRequest) => {
     const ownerRef = doc(db, USER_COLLECTION, input.ownerId);
     const documentBody = {
       owner: ownerRef,
+      title: "Ride to somewhere",
       originLocation,
       destinationLocation,
       departureTime,
