@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/utils/firebase";
-import { collection, addDoc, getDoc, doc, setDoc, GeoPoint, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDoc,
+  doc,
+  setDoc,
+  GeoPoint,
+  Timestamp,
+} from "firebase/firestore";
 import {
   USER_COLLECTION,
   UserDocumentObject,
@@ -37,7 +45,7 @@ export const POST = async (req: NextRequest) => {
     const arrivalTime = input.arrivalTime
       ? Timestamp.fromDate(new Date(input.arrivalTime))
       : undefined;
-    
+
     const ownerRef = doc(db, USER_COLLECTION, input.ownerId);
     const documentBody = {
       owner: ownerRef,
