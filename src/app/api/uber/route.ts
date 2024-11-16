@@ -1,4 +1,4 @@
-import { getUberAccessToken } from '@/utils/uberAuth';
+import { getUberAccessToken } from "@/utils/uberAuth";
 import { NextRequest, NextResponse } from "next/server";
 
 // Getting Access Token
@@ -15,4 +15,3 @@ export const GET = async (req: NextRequest) => {
     );
   }
 };
-
