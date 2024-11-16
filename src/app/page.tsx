@@ -27,7 +27,9 @@ const Home = () => {
         onSubmit={handleSubmit}
         className="mx-auto max-w-md rounded-md bg-white shadow-md"
       >
-        <Button variant="contained" type="submit">Testing</Button>
+        <Button variant="contained" type="submit">
+          Testing
+        </Button>
         <div className="mb-4 p-3">
           <label htmlFor="name" className="mb-2 block font-bold text-gray-700">
             Name:
