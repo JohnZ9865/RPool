@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/utils/firebase";
 import { collection, addDoc, getDoc, doc, setDoc } from "firebase/firestore";
-import { USER_COLLECTION, UserDocumentObject, YearEnum } from "../../types/user";
+import {
+  USER_COLLECTION,
+  UserDocumentObject,
+  YearEnum,
+} from "../../types/user";
 
 interface expectedInput {
   name: string;
@@ -15,7 +19,7 @@ export const POST = async (req: NextRequest) => {
   const res = NextResponse;
 
   try {
-  const { name, email } = await req.json();
+    const { name, email } = await req.json();
 
     const documentBody = {
       name,
