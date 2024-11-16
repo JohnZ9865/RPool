@@ -42,7 +42,9 @@ const LocationWrapper = styled(Box)(({ theme }) => ({
 
 const RideDetails = ({ params }: { params: { id: string } }) => {
   console.log(params);
-  const [ridePost, setRidePost] = useState<PopulatedPostingObject | undefined>(undefined);
+  const [ridePost, setRidePost] = useState<PopulatedPostingObject | undefined>(
+    undefined,
+  );
 
   const fetchRidePost = async () => {
     try {
@@ -87,7 +89,7 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
   };
 
   if (!ridePost) {
-    return <LinearProgress />
+    return <LinearProgress />;
   }
 
   return (
