@@ -5,9 +5,19 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   onAuthStateChanged as _onAuthStateChanged,
 } from "firebase/auth";
-import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  query,
+  getDocs,
+  where,
+} from "firebase/firestore";
 
 // Your Firebase configuration
 const firebaseConfig = {
@@ -37,20 +47,69 @@ export function onAuthStateChanged(callback: (authUser: User | null) => void) {
   return _onAuthStateChanged(firebaseAuth, callback);
 }
 
+export const doesEmailExist = async (targetEmail: string): Promise<boolean> => {
+  try {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", targetEmail));
+    const querySnapshot = await getDocs(q);
+
+    return !querySnapshot.empty; // Return true if at least one document matches
+  } catch (error) {
+    console.error("Error checking email existence:", error);
+    return false; // Handle gracefully
+  }
+};
+
+//pop up version:
 export async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
 
   try {
     const result = await signInWithPopup(firebaseAuth, provider);
-
     if (!result || !result.user) {
       throw new Error("Google sign in failed");
     }
+    const targetEmail = result.user.email;
+    const existness = await doesEmailExist(targetEmail);
+    console.log("sign in with google firebase.ts", existness, "end existness");
+
+    if (existness) {
+    } else {
+    }
+
     return result.user.uid;
   } catch (error) {
     console.error("Error signing in with Google", error);
   }
 }
+
+// non pop up version:
+// export async function signInWithGoogle() {
+//   const provider = new GoogleAuthProvider();
+
+//   try {
+
+//     // Initiates the Google sign-in with redirect
+//     await signInWithRedirect(firebaseAuth, provider);
+//     console.log("fucking login already for fucks sake");
+//     const result = await getRedirectResult(firebaseAuth);
+
+//     if (result && result.user) {
+//       const uid = result.user.uid; // Get the UID
+//       console.log("User signed in successfully:", uid);
+
+//       // Redirect to "/home"
+//       return uid;
+//     } else {
+//       console.log("No user signed in or no result found.");
+//       return null;
+//     }
+//   } catch (error) {
+//     console.error("Error during Google sign-in process", error);
+//     return null;
+//   }
+
+// }
 
 export async function signOutWithGoogle() {
   try {

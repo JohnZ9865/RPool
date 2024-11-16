@@ -8,7 +8,6 @@ import { TextField, Box, Button, Typography } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 
 const Page = ({ session }: { session: string | null }) => {
-  console.log("arrived at login");
   const userSessionId = useUserSession(session);
 
   const handleSignIn = async () => {

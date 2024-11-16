@@ -4,8 +4,8 @@ import { useState } from "react";
 import { api } from "@/utils/api";
 import toast from "react-hot-toast";
 
-const Home = ({params}: {params: {id: string}}) => {
-console.log(params)
+const Home = ({ params }: { params: { id: string } }) => {
+  console.log(params);
   const [name, setName] = useState("");
 
   return (

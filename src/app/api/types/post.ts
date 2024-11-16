@@ -7,6 +7,7 @@ export const getRidePostDocument = (id: string) => `${POST_COLLECTION}/${id}`;
 
 export interface RidePostingObject {
   owner: DocumentReference;
+  title: string;
   originLocation: GeoPoint;
   destinationLocation: GeoPoint;
   departureTime: Timestamp;
