@@ -13,27 +13,27 @@ import {
   Paper,
   ThemeProvider,
   createTheme,
-} from '@mui/material';
+} from "@mui/material";
 import {
   LocationOn,
   AccessTime,
   Group,
   AttachMoney,
-  Notes
-} from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
+  Notes,
+} from "@mui/icons-material";
+import { styled } from "@mui/material/styles";
 import { POST_COLLECTION } from "@/app/api/types/post";
 
 // Create custom styled components
 const IconWrapper = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing(1),
   marginBottom: theme.spacing(2),
 }));
 
 const LocationWrapper = styled(Box)(({ theme }) => ({
-  display: 'flex',
+  display: "flex",
   gap: theme.spacing(2),
   marginBottom: theme.spacing(3),
 }));
@@ -60,62 +60,66 @@ interface RideData {
   notes: string;
 }
 
-
-
-const RideDetails = ({rideId}) => {
+const RideDetails = ({ rideId }) => {
   const rideData: RideData = {
     title: "SF to LA",
     originLocation: {
       latitude: 37.7749,
-      longitude: -122.4194
+      longitude: -122.4194,
     },
     destinationLocation: {
       latitude: 34.0522,
-      longitude: -118.2437
+      longitude: -118.2437,
     },
     departureTime: {
-      seconds: 1710954000
+      seconds: 1710954000,
     },
     arrivalTime: {
-      seconds: 1710975600
+      seconds: 1710975600,
     },
     totalCost: 45,
     totalSeats: 4,
-    notes: "Direct route, 2 stops for breaks"
+    notes: "Direct route, 2 stops for breaks",
   };
-
 
   // Create theme with custom colors
   const theme = createTheme({
     palette: {
       primary: {
-        main: '#1976d2',
+        main: "#1976d2",
       },
       secondary: {
-        main: '#dc004e',
+        main: "#dc004e",
       },
     },
   });
 
   const formatDateTime = (seconds: number) => {
     const date = new Date(seconds * 1000);
-    return date.toLocaleString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
+    return date.toLocaleString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ maxWidth: 800, margin: 'auto', p: 2 }}>
+      <Box sx={{ maxWidth: 800, margin: "auto", p: 2 }}>
         <Card elevation={3}>
           <CardContent>
             {/* Header */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 3,
+              }}
+            >
               <Typography variant="h4" component="h1" gutterBottom>
                 {rideData.title}
               </Typography>
@@ -139,7 +143,8 @@ const RideDetails = ({rideId}) => {
                     San Francisco
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    {rideData.originLocation.latitude}°N, {rideData.originLocation.longitude}°W
+                    {rideData.originLocation.latitude}°N,{" "}
+                    {rideData.originLocation.longitude}°W
                   </Typography>
                 </Box>
               </LocationWrapper>
@@ -154,7 +159,8 @@ const RideDetails = ({rideId}) => {
                     Los Angeles
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    {rideData.destinationLocation.latitude}°N, {rideData.destinationLocation.longitude}°W
+                    {rideData.destinationLocation.latitude}°N,{" "}
+                    {rideData.destinationLocation.longitude}°W
                   </Typography>
                 </Box>
               </LocationWrapper>
@@ -223,8 +229,6 @@ const RideDetails = ({rideId}) => {
 };
 
 export default RideDetails;
-
-
 
 // const Home = ({ params }: { params: { id: string } }) => {
 //   console.log(params);
