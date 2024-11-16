@@ -7,6 +7,7 @@ import Link from "next/link";
 import Timecard from "@/components/Timecard";
 import { GetAllResponse } from "../api/post/getAll/route";
 import { api } from "@/utils/api";
+import { useUserSession } from "@/hooks/useSession";
 
 const origin = "UCR";
 const destination = "Ontario";
@@ -16,6 +17,8 @@ const time = "5:00 PM PST";
 const price = "$30";
 
 const Page = () => {
+  const { firestoreId } = useUserSession(null);
+
   const [posts, setPosts] = useState<GetAllResponse>({
     allPosts: [],
     userIsPassenger: [],
@@ -26,7 +29,7 @@ const Page = () => {
     try {
       const posts = await api({
         method: "GET",
-        url: "/api/post/getAll",
+        url: `/api/post/getAll?ownerId=${firestoreId}`,
       });
       setPosts(posts);
     } catch (err) {
@@ -35,8 +38,10 @@ const Page = () => {
   };
 
   useEffect(() => {
-    getAllPostsData();
-  }, []);
+    if (firestoreId) {
+      getAllPostsData();
+    }
+  }, [firestoreId]);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
