@@ -16,7 +16,9 @@ export interface RidePostingObject {
   owner: DocumentReference;
   title: string;
   originLocation: GeoPoint;
+  originName: string;
   destinationLocation: GeoPoint;
+  destinationName: string;
   departureTime: Timestamp;
   arrivalTime?: Timestamp;
   totalCost: number;
