@@ -1,10 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Box, TextField, Button, IconButton, Avatar, Typography } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  IconButton,
+  Avatar,
+  Typography,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
 
 const ProfilePage = () => {
   const [isEditingName, setIsEditingName] = useState(false);
@@ -32,7 +38,7 @@ const ProfilePage = () => {
     <Box
       sx={{
         minHeight: "100vh",
-        background: "white", 
+        background: "white",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -58,9 +64,9 @@ const ProfilePage = () => {
         sx={{
           width: 100,
           height: 100,
-          mb: 3, 
+          mb: 3,
         }}
-        src="https://via.placeholder.com/100" 
+        src="https://via.placeholder.com/100"
         alt="User Profile"
       />
 
@@ -71,7 +77,7 @@ const ProfilePage = () => {
           maxWidth: "600px",
           display: "flex",
           flexDirection: "column",
-          gap: 6, 
+          gap: 6,
         }}
       >
         {/* Name Field */}
@@ -152,16 +158,16 @@ const ProfilePage = () => {
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: 3,
-                borderColor: "black", 
+                borderColor: "black",
               },
               "& .MuiInputLabel-root": {
                 color: "black", // Black label color
               },
               "& .MuiOutlinedInput-input": {
-                color: "black", 
+                color: "black",
               },
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "black", 
+                borderColor: "black",
               },
               "& .MuiInputBase-input::placeholder": {
                 color: "black",
@@ -209,18 +215,25 @@ const ProfilePage = () => {
 
       {}
       {isEditingName || isEditingEmail || isEditingMajor || isEditingYear ? (
-        <Box sx={{ mt: 4, width: "100%", display: "flex", justifyContent: "center" }}>
+        <Box
+          sx={{
+            mt: 4,
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
           <Button
             variant="contained"
             sx={{
               width: "200px",
-              backgroundColor: "#3e94c9", 
+              backgroundColor: "#3e94c9",
               color: "black",
               borderRadius: "8px",
               padding: "10px",
-              textTransform: "none", 
+              textTransform: "none",
               "&:hover": {
-                backgroundColor: "blue", 
+                backgroundColor: "blue",
               },
             }}
             onClick={() => {
@@ -239,5 +252,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
-
