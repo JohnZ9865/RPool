@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -63,6 +63,13 @@ interface RideData {
 }
 
 const EditRideDetails = () => {
+  const [autocompleteService, setAutocompleteService] = useState<any>(null);
+  const [placesService, setPlacesService] = useState<any>(null);
+  const [originOptions, setOriginOptions] = useState<any[]>([]);
+  const [destinationOptions, setDestinationOptions] = useState<any[]>([]);
+  const [originLoading, setOriginLoading] = useState(false);
+  const [destinationLoading, setDestinationLoading] = useState(false);
+
   // Initial data
   const initialRideData: RideData = {
     title: "SF to LA",
@@ -88,6 +95,7 @@ const EditRideDetails = () => {
   const [rideData, setRideData] = useState<RideData>(initialRideData);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
+
 
   const theme = createTheme({
     palette: {
