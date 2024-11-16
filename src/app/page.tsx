@@ -13,7 +13,7 @@ const Home = () => {
     e.preventDefault();
     api({
       method: "POST",
-      url: "/api/user",
+      url: "/api/user/add",
       body: { name, email },
     })
       .then(() => toast(`Submitted successfully!`))
