@@ -9,7 +9,7 @@ const Home = () => {
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center">
-        Our account information screen.
+      Our account information screen.
     </div>
   );
 };

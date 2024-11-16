@@ -9,10 +9,9 @@ const Home = () => {
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center">
-        Our Time Card screen. Make this dynamic routing.
+      Our Time Card screen. Make this dynamic routing.
     </div>
   );
 };
 
 export default Home;
-
