@@ -1,17 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { api } from "@/utils/api";
-import toast from "react-hot-toast";
 
-const Home = () => {
-  const [name, setName] = useState("");
+import { useUserSession } from "@/hooks/useSession";
+import { signInWithGoogle, signOutWithGoogle } from "@/utils/firebase";
+import { createSession, removeSession } from "@/actions/auth-actions";
+
+const Page = ({ session }: { session: string | null }) => {
+  console.log("arrived at login");
+  const userSessionId = useUserSession(session);
+
+  const handleSignIn = async () => {
+    // if (userSessionId != null) return ;
+
+    const userUid = await signInWithGoogle();
+    if (userUid) {
+      await createSession(userUid);
+    }
+  };
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center">
-      Our Login screen
+      <button onClick={handleSignIn}>Sign In</button>
+      Brotha: {userSessionId}
     </div>
   );
 };
 
-export default Home;
+export default Page;

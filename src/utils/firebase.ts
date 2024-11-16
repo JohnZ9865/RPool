@@ -1,6 +1,12 @@
 // Import the functions you need from the SDKs
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  type User,
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged as _onAuthStateChanged,
+} from "firebase/auth";
 import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
 
 // Your Firebase configuration
@@ -18,7 +24,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Instantiate services
-export const auth = getAuth(app);
+export const firebaseAuth = getAuth(app);
 export const db = getFirestore(app);
 
 // Google Auth Provider
@@ -27,30 +33,29 @@ const googleProvider = new GoogleAuthProvider();
 /**
  * Signs in the user with Google and stores their information in Firestore.
  */
-export const signInWithGoogle = async () => {
+export function onAuthStateChanged(callback: (authUser: User | null) => void) {
+  return _onAuthStateChanged(firebaseAuth, callback);
+}
+
+export async function signInWithGoogle() {
+  const provider = new GoogleAuthProvider();
+
   try {
-    // Perform Google Sign-In
-    const result = await signInWithPopup(auth, googleProvider);
-    const user = result.user;
+    const result = await signInWithPopup(firebaseAuth, provider);
 
-    // Reference to the Firestore 'users' collection and user document
-    const usersCollection = collection(db, "users");
-    const userDoc = doc(usersCollection, user.uid);
-
-    // Save user info in Firestore
-    await setDoc(
-      userDoc,
-      {
-        name: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        createdAt: new Date(),
-      },
-      { merge: true }, // Prevent overwriting if document exists
-    );
-
-    console.log("User signed in and saved to Firestore:", user);
+    if (!result || !result.user) {
+      throw new Error("Google sign in failed");
+    }
+    return result.user.uid;
   } catch (error) {
-    console.error("Error during Google sign-in:", error.message);
+    console.error("Error signing in with Google", error);
   }
-};
+}
+
+export async function signOutWithGoogle() {
+  try {
+    await firebaseAuth.signOut();
+  } catch (error) {
+    console.error("Error signing out with Google", error);
+  }
+}

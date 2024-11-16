@@ -5,6 +5,9 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
+import { SESSION_COOKIE_NAME } from "@/constant";
+import { cookies } from "next/headers";
+import React from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,12 +21,25 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  const session = cookies().get(SESSION_COOKIE_NAME)?.value || null;
+
   return (
     <html lang="en">
       <body className={inter.className}>
         <Toaster />
-        {children}
+
+        <SessionProvider session={session}>{children}</SessionProvider>
       </body>
     </html>
   );
 }
+
+const SessionProvider = ({
+  children,
+  session,
+}: {
+  children: ReactNode;
+  session: string | null;
+}) => {
+  return React.cloneElement(children as any, { session });
+};
