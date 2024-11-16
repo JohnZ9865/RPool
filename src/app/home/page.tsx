@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { Box, AppBar, Toolbar, Typography, IconButton } from "@mui/material";
@@ -32,7 +32,7 @@ const Page = () => {
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   useEffect(() => {
     getAllPostsData();
