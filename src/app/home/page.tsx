@@ -1,8 +1,12 @@
-import React from "react";
+'use client';
+
+import React, { useEffect, useState } from "react";
 import { Box, AppBar, Toolbar, Typography, IconButton } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Link from "next/link";
 import Timecard from "@/components/Timecard";
+import { GetAllResponse } from "../api/post/getAll/route";
+import { api } from "@/utils/api";
 
 const origin = "UCR";
 const destination = "Ontario";
@@ -12,6 +16,28 @@ const time = "5:00 PM PST";
 const price = "$30";
 
 const Page = () => {
+  const [posts, setPosts] = useState<GetAllResponse>({
+    allPosts: [],
+    userIsPassenger: [],
+    message: "",
+  });
+
+  const getAllPostsData = async () => {
+    try {
+      const posts = await api({
+        method: "GET",
+        url: "/api/post/getAll",
+      });
+      setPosts(posts);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+    getAllPostsData();
+  }, []);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       {/* Top Header with Gradient Background */}
