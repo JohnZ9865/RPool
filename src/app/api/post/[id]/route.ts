@@ -1,7 +1,11 @@
 import { db } from "@/utils/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
-import { PopulatedPostingObject, POST_COLLECTION, RidePostingObject } from "../../types/post";
+import {
+  PopulatedPostingObject,
+  POST_COLLECTION,
+  RidePostingObject,
+} from "../../types/post";
 import { UserDocumentObject } from "../../types/user";
 
 const getIDFromURL = (url: string) => {
@@ -16,37 +20,42 @@ export const GET = async (req: NextRequest) => {
   try {
     const postId = getIDFromURL(req.url);
 
-    const postData = (await getDoc(doc(db, POST_COLLECTION, postId))).data() as RidePostingObject;
+    const postData = (
+      await getDoc(doc(db, POST_COLLECTION, postId))
+    ).data() as RidePostingObject;
 
-     // Check if usersInRide exists and is an array
-     const usersInRide = postData.usersInRide
-     ? await Promise.all(
-         postData.usersInRide.map(async (user) => {
-           const userDoc = await getDoc(user);
-           // Check if document exists
-           if (!userDoc.exists()) {
-             console.error(
-               `User document not found for reference: ${user.path}`,
-             );
-             return null;
-           }
-           return userDoc.data() as UserDocumentObject;
-         }),
-       ).then((users) => users.filter((user) => user !== null))
-     : [];
+    // Check if usersInRide exists and is an array
+    const usersInRide = postData.usersInRide
+      ? await Promise.all(
+          postData.usersInRide.map(async (user) => {
+            const userDoc = await getDoc(user);
+            // Check if document exists
+            if (!userDoc.exists()) {
+              console.error(
+                `User document not found for reference: ${user.path}`,
+              );
+              return null;
+            }
+            return userDoc.data() as UserDocumentObject;
+          }),
+        ).then((users) => users.filter((user) => user !== null))
+      : [];
 
-   // Check if owner reference exists
-   if (!postData.owner) {
-     console.error("Post owner reference is missing:", postData);
-     return res.json({ message: "Post owner reference is missing" }, { status: 400 });
-   }
+    // Check if owner reference exists
+    if (!postData.owner) {
+      console.error("Post owner reference is missing:", postData);
+      return res.json(
+        { message: "Post owner reference is missing" },
+        { status: 400 },
+      );
+    }
 
-   const ownerDoc = await getDoc(postData.owner);
-   if (!ownerDoc.exists()) {
-     console.error(
-       `Owner document not found for reference: ${postData.owner.path}`,
-     );
-    return res.json({ message: "Owner document not found" }, { status: 400 });
+    const ownerDoc = await getDoc(postData.owner);
+    if (!ownerDoc.exists()) {
+      console.error(
+        `Owner document not found for reference: ${postData.owner.path}`,
+      );
+      return res.json({ message: "Owner document not found" }, { status: 400 });
     }
 
     const ownerData = ownerDoc.data() as UserDocumentObject;
@@ -57,10 +66,7 @@ export const GET = async (req: NextRequest) => {
       usersInRide,
     };
 
-    return res.json(
-      { message: "OK", postDoc: populatedPost },
-      { status: 200 },
-    );
+    return res.json({ message: "OK", postDoc: populatedPost }, { status: 200 });
   } catch (err) {
     return res.json(
       { message: `Internal Server Error: ${err}` },
