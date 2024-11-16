@@ -96,7 +96,6 @@ const EditRideDetails = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
-
   const theme = createTheme({
     palette: {
       primary: {
