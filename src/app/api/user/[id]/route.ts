@@ -23,10 +23,13 @@ export const GET = async (req: NextRequest) => {
 
   try {
     const userId = getUserIdFromUrl(req.url);
-    
+
     const userDoc = await getDoc(doc(db, USER_COLLECTION, userId));
 
-    return res.json({ message: "OK", userDoc: userDoc.data() }, { status: 200 });
+    return res.json(
+      { message: "OK", userDoc: userDoc.data() },
+      { status: 200 },
+    );
   } catch (err) {
     return res.json(
       { message: `Internal Server Error: ${err}` },
