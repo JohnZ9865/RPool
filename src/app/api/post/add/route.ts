@@ -18,7 +18,7 @@ import { POST_COLLECTION } from "../../types/post";
 
 interface ExpectedInput {
   ownerId: string;
-  title: string
+  title: string;
   originLocation: { latitude: number; longitude: number };
   destinationLocation: { latitude: number; longitude: number };
   departureTime: string;

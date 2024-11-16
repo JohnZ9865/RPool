@@ -17,8 +17,6 @@ export const GET = async (req: NextRequest) => {
 
     const postData = await getDoc(doc(db, POST_COLLECTION, postId));
 
-
-
     return res.json(
       { message: "OK", postDoc: postData.data() },
       { status: 200 },
@@ -48,8 +46,4 @@ export const PUT = async (req: NextRequest) => {
       { status: 500 },
     );
   }
-}
-
-
-
-
+};
