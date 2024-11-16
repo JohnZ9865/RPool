@@ -8,7 +8,7 @@ import { TextField, Box, Button, Typography } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { join } from "path/win32";
 
-const Page = ({ session }: { session: string | null }) => {
+const Login = ({ session }: { session: string | null }) => {
   const userSessionId = useUserSession(session).userUid;
 
   console.log("firestore id", useUserSession(session));
@@ -86,11 +86,10 @@ const Page = ({ session }: { session: string | null }) => {
             Sign in with Google
           </Typography>
         </Button>
-        <button onClick={handleSignIn}> sign in </button>
         User session ID {userSessionId}
       </Box>
     </Box>
   );
 };
 
-export default Page;
+export default Login;

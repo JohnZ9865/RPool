@@ -103,7 +103,7 @@ export async function signInWithGoogle() {
 
     if (existness) {
       //directs to home
-      window.location.href = "/account";
+      window.location.href = "/home";
     } else {
       //redirect to /signup page.
       window.location.href = "/signup";
