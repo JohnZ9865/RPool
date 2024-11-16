@@ -7,7 +7,6 @@ import { signInWithGoogle, signOutWithGoogle } from "@/utils/firebase";
 import { createSession, removeSession } from "@/actions/auth-actions";
 
 const Page = ({ session }: { session: string | null }) => {
-  console.log("arrived at login");
   const userSessionId = useUserSession(session);
 
   const handleSignIn = async () => {
