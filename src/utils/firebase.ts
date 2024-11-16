@@ -46,7 +46,7 @@ export const signInWithGoogle = async () => {
         photoURL: user.photoURL,
         createdAt: new Date(),
       },
-      { merge: true } // Prevent overwriting if document exists
+      { merge: true }, // Prevent overwriting if document exists
     );
 
     console.log("User signed in and saved to Firestore:", user);
