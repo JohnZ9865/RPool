@@ -16,11 +16,13 @@ import {
 } from "../../types/user";
 import { POST_COLLECTION } from "../../types/post";
 
-interface ExpectedInput {
+export interface ExpectedInputAddPostInput {
   ownerId: string;
   title: string;
   originLocation: { latitude: number; longitude: number };
+  originName: string;
   destinationLocation: { latitude: number; longitude: number };
+  destinationName: string;
   departureTime: string;
   arrivalTime?: string;
   totalCost: number;
@@ -32,7 +34,7 @@ export const POST = async (req: NextRequest) => {
   const res = NextResponse;
 
   try {
-    const input: ExpectedInput = await req.json();
+    const input: ExpectedInputAddPostInput = await req.json();
 
     const originLocation = new GeoPoint(
       input.originLocation.latitude,
@@ -50,9 +52,11 @@ export const POST = async (req: NextRequest) => {
     const ownerRef = doc(db, USER_COLLECTION, input.ownerId);
     const documentBody = {
       owner: ownerRef,
-      title: "Ride to somewhere",
+      title: input.title,
       originLocation,
+      originName: input.originName,
       destinationLocation,
+      destinationName: input.destinationName,
       departureTime,
       arrivalTime,
       totalCost: input.totalCost,

@@ -9,9 +9,17 @@ import {
   Avatar,
   Typography,
 } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  IconButton,
+  Avatar,
+  Typography,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import Link from "next/link";
+
 
 const ProfilePage = () => {
   const [isEditingName, setIsEditingName] = useState(false);

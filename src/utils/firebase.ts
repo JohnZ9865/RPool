@@ -74,7 +74,11 @@ export async function signInWithGoogle() {
     console.log("sign in with google firebase.ts", existness, "end existness");
 
     if (existness) {
+      //directs to home
+      window.location.href = "/account";
     } else {
+      //redirect to /signup page.
+      window.location.href = "/signup";
     }
 
     return result.user.uid;
