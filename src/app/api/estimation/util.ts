@@ -109,6 +109,40 @@ export const getEstimation = async (
   return priceEstimation;
 };
 
+export interface CarbonEstimateReturn {
+  name: string;
+  emissions: number;
+}
+
+export const getEmissionsEstimation = async (
+  serviceSummaries: ServiceSummary[],
+  originLocation: MyGeoPoint,
+  destinationLocation: MyGeoPoint,
+): Promise<CarbonEstimateReturn[]> => {
+  const { duration } = await getPolyLine(originLocation, destinationLocation);
+  return serviceSummaries.map((serviceSummary) => {
+    let emissionsFactor = 0.0005; // Default emissions factor
+    switch (serviceSummary.name) {
+      case "Uber Black":
+        emissionsFactor = 0.0001;
+        break;
+      case "Uber Comfort Electric":
+        emissionsFactor = 0.0002;
+        break;
+      case "Uber X":
+        emissionsFactor = 0.0003;
+        break;
+      case "Uber XL":
+        emissionsFactor = 0.0004;
+        break;
+    }
+    return {
+      name: serviceSummary.name,
+      emissions: duration * emissionsFactor,
+    };
+  });
+};
+
 function parseRateInfo(notes: string[]): {
   perMile?: number;
   perMinute?: number;

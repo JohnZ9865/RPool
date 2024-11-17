@@ -36,6 +36,7 @@ import {
   EstimationExpectedOutput,
 } from "../api/estimation/route";
 import { useRouter } from "next/navigation";
+import { CarbonEstimateReturn } from "@/app/api/estimation/util";
 
 const libraries: Library[] = ["places"];
 
@@ -83,6 +84,9 @@ const EditRideDetails = () => {
   const [formState, setFormState] = useState<ForState>(initialData);
   const [isSaving, setIsSaving] = useState(false);
   const [costEstimate, setCostEstimate] = useState<ServiceSummary[]>([]);
+  const [carbonEstimates, setCarbonEstimates] = useState<
+    CarbonEstimateReturn[]
+  >([]);
   const [selectedService, setSelectedService] = useState<string | null>(null);
 
   const router = useRouter();
@@ -121,7 +125,9 @@ const EditRideDetails = () => {
         url: "/api/estimation",
         body: estimationInput,
       });
+      console.log(response);
       setCostEstimate(response.serviceSummaries);
+      // setCarbonEstimates(response.emissionsEstimations);
     } catch (error) {
       console.error("Error getting cost estimate", error);
     }
