@@ -15,6 +15,7 @@ import {
   LinearProgress,
   Button,
   CircularProgress,
+  Grid,
 } from "@mui/material";
 import {
   LocationOn,
@@ -86,7 +87,7 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     fetchRidePost();
-  }, []); // Create theme with custom colors
+  }, []);
 
   const theme = createTheme({
     palette: {
@@ -117,14 +118,9 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
 
   return (
     <ThemeProvider theme={theme}>
-            
       <Box sx={{ maxWidth: 800, margin: "auto", p: 2 }}>
-                
         <Card elevation={3}>
-                    
           <CardContent>
-                        {/* Header */}
-                        
             <Box
               sx={{
                 display: "flex",
@@ -133,12 +129,9 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
                 mb: 3,
               }}
             >
-                            
               <Typography variant="h4" component="h1" gutterBottom>
-                                {ridePost.title}
-                              
+                {ridePost.title}
               </Typography>
-                            
               {isLoading ? (
                 <CircularProgress size={24} />
               ) : !isUserOwner ? (
@@ -147,24 +140,17 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
                   color={isUserInRide ? "error" : "success"}
                   onClick={handleJoinOrLeaveRide}
                 >
-                                    {isUserInRide ? "Leave Ride" : "Join Ride"}
-                                  
+                  {isUserInRide ? "Leave Ride" : "Join Ride"}
                 </Button>
               ) : null}
-                          
             </Box>
-                        
             <Paper sx={{ p: 2, mb: 3 }} elevation={1}>
-                
               <Grid container spacing={2}>
-                    {/* Origin and Destination */}
-                    
                 <Grid
                   item
                   xs={8}
                   sx={{ display: "flex", justifyContent: "flex-start" }}
                 >
-                        
                   <Box
                     sx={{
                       display: "flex",
@@ -172,63 +158,38 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
                       alignItems: "flex-start",
                     }}
                   >
-                            
                     <LocationWrapper>
-                                
                       <LocationOn color="success" />
-                                
                       <Box>
-                                    
                         <Typography variant="subtitle2" color="textSecondary">
-                                        Origin             
+                          Origin
                         </Typography>
-                                    
                         <Typography variant="body1" fontWeight="medium">
-                                        {ridePost.originName}
-                                      
+                          {ridePost.originName}
                         </Typography>
-                                    
                         <Typography variant="body2" color="textSecondary">
-                                        {ridePost.originLocation.latitude}°N,{" "}
-                                        {ridePost.originLocation.longitude}°W
-                                      
+                          {ridePost.originLocation.latitude}°N,{" "}
+                          {ridePost.originLocation.longitude}°W
                         </Typography>
-                                  
                       </Box>
-                              
                     </LocationWrapper>
-                            
                     <LocationWrapper>
-                                
                       <LocationOn color="error" />
-                                
                       <Box>
-                                    
                         <Typography variant="subtitle2" color="textSecondary">
-                                        Destination             
+                          Destination
                         </Typography>
-                                    
                         <Typography variant="body1" fontWeight="medium">
-                                        {ridePost.destinationName}
-                                      
+                          {ridePost.destinationName}
                         </Typography>
-                                    
                         <Typography variant="body2" color="textSecondary">
-                                        {ridePost.destinationLocation.latitude}
-                          °N,               
+                          {ridePost.destinationLocation.latitude}°N,{" "}
                           {ridePost.destinationLocation.longitude}°W
-                                      
                         </Typography>
-                                  
                       </Box>
-                              
                     </LocationWrapper>
-                          
                   </Box>
-                      
                 </Grid>
-                    {/* Passengers List */}
-                    
                 <Grid
                   item
                   xs={4}
@@ -239,7 +200,6 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
                     marginLeft: "-100px",
                   }}
                 >
-                        
                   <Box
                     sx={{
                       display: "flex",
@@ -247,137 +207,79 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
                       alignItems: "flex-start",
                     }}
                   >
-                            
                     <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                                
                       <Person sx={{ mr: 1 }} />
-                                <Typography variant="h6">Passengers</Typography>
-                              
+                      <Typography variant="h6">Passengers</Typography>
                     </Box>
-                            
                     <Box sx={{ mt: 2 }}>
-                                
                       {ridePost.usersInRide.map((user) => (
                         <Typography
                           key={user.email}
                           variant="body1"
                           sx={{ mb: 0.5 }}
                         >
-                                        {user.name || "Anonymous"}
-                                      
+                          {user.name || "Anonymous"}
                         </Typography>
                       ))}
-                              
                     </Box>
-                          
                   </Box>
-                      
                 </Grid>
-                  
               </Grid>
             </Paper>
-                        {/* Time and Cost */}
-                        
             <Grid container spacing={3} sx={{ mb: 3 }}>
-                            
               <Grid item xs={12} md={6}>
-                                
                 <IconWrapper>
-                                    
                   <AccessTime color="action" />
-                                    
                   <Box>
-                                        
                     <Typography variant="subtitle2" color="textSecondary">
-                                            Departure                     
+                      Departure
                     </Typography>
-                                        
                     <Typography variant="body1" fontWeight="medium">
-                                            
                       {formatDateTime(ridePost.departureTime.seconds)}
-                                          
                     </Typography>
-                                      
                   </Box>
-                                  
                 </IconWrapper>
-                              
               </Grid>
-                            
               <Grid item xs={12} md={6}>
-                                
                 <IconWrapper>
-                                    
                   <AccessTime color="action" />
-                                    
                   <Box>
-                                        
                     <Typography variant="subtitle2" color="textSecondary">
-                                            Arrival                     
+                      Arrival
                     </Typography>
-                                        
                     <Typography variant="body1" fontWeight="medium">
-                                            
                       {formatDateTime(ridePost.arrivalTime.seconds)}
-                                          
                     </Typography>
-                                      
                   </Box>
-                                  
                 </IconWrapper>
-                              
               </Grid>
-                          
             </Grid>
-                        {/* Cost */}
-                        
             <IconWrapper>
-                            
               <AttachMoney color="action" />
-                            
               <Box>
-                                
                 <Typography variant="subtitle2" color="textSecondary">
-                                    Total Cost                 
+                  Total Cost
                 </Typography>
-                                
                 <Typography variant="body1" fontWeight="medium">
-                                    ${ridePost.totalCost}
-                                  
+                  ${ridePost.totalCost}
                 </Typography>
-                              
               </Box>
-                          
             </IconWrapper>
-                        {/* Notes */}
-                        
             <IconWrapper>
-                            
               <Notes color="action" />
-                            
               <Box>
-                                
                 <Typography variant="subtitle2" color="textSecondary">
-                                    Notes                 
+                  Notes
                 </Typography>
-                                
                 <Typography variant="body1" fontWeight="medium">
-                                    {ridePost.notes}
-                                  
+                  {ridePost.notes}
                 </Typography>
-                              
               </Box>
-                          
             </IconWrapper>
-                      
           </CardContent>
-                  
         </Card>
-              
       </Box>
-            
       <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
-                
         {isUserOwner && (
           <Button
             sx={{ width: "7%", fontSize: "1.2rem", height: "50px" }}
@@ -386,12 +288,10 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
             color="primary"
             href={`/post/create?postId=${params.id}`}
           >
-                        Edit           
+            Edit
           </Button>
         )}
-              
       </Box>
-          
     </ThemeProvider>
   );
 };
