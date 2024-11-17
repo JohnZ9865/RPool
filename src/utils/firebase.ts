@@ -148,7 +148,7 @@ export async function signInWithGoogle() {
       await createUserDocument(name, email, photoURL);
       //redirect to /signup page.
       console.log("make user", result);
-      window.location.href = "/signup";
+      window.location.href = "/account";
     }
 
     return result.user.uid;

@@ -1,35 +1,66 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   TextField,
   Button,
   IconButton,
   Avatar,
-  Typography,
+  LinearProgress,
+  Autocomplete,
+  CircularProgress,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Link from "next/link";
+import { useUserSession } from "@/hooks/useSession";
+import { api } from "@/utils/api";
+import { UserDocumentObject, YearEnum } from "../api/types/user";
 
 const ProfilePage = () => {
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [isEditingEmail, setIsEditingEmail] = useState(false);
-  const [isEditingMajor, setIsEditingMajor] = useState(false);
-  const [isEditingYear, setIsEditingYear] = useState(false);
+  const { firestoreId } = useUserSession(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [formState, setFormState] = useState<UserDocumentObject>({
+    id: firestoreId,
+    name: "",
+    email: "",
+    major: "",
+    year: YearEnum.FRESHMAN,
+    profilePictureUrl: "",
+  });
 
-  const [name, setName] = useState("John Doe");
-  const [email, setEmail] = useState("john.doe@example.com");
-  const [major, setMajor] = useState("Computer Science");
-  const [year, setYear] = useState("Senior");
-
-  const handleEditClick = (field) => {
-    if (field === "name") setIsEditingName(!isEditingName);
-    if (field === "email") setIsEditingEmail(!isEditingEmail);
-    if (field === "major") setIsEditingMajor(!isEditingMajor);
-    if (field === "year") setIsEditingYear(!isEditingYear);
+  const saveChanges = async () => {
+    setIsSaving(true);
+    await fetch("/api/user/edit", {
+      method: "POST",
+      body: JSON.stringify(formState),
+    });
+    setIsSaving(false);
   };
+
+  const getUserData = async () => {
+    try {
+      const res = await api({
+        method: "GET",
+        url: `/api/user/${firestoreId}`,
+      });
+      setFormState(res.userDoc);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    if (firestoreId) {
+      getUserData();
+      setIsLoading(false);
+    }
+  }, [firestoreId]);
+
+  if (isLoading) {
+    return <LinearProgress />;
+  }
 
   return (
     <Box
@@ -65,7 +96,7 @@ const ProfilePage = () => {
           height: 100,
           mb: 3,
         }}
-        src="https://via.placeholder.com/100"
+        src={formState.profilePictureUrl}
         alt="User Profile"
       />
 
@@ -82,12 +113,14 @@ const ProfilePage = () => {
         {/* Name Field */}
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <TextField
+            required
             label="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={formState.name}
+            onChange={(e) =>
+              setFormState({ ...formState, name: e.target.value })
+            }
             variant="outlined"
             fullWidth
-            disabled={!isEditingName}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: 3,
@@ -107,20 +140,19 @@ const ProfilePage = () => {
               },
             }}
           />
-          <IconButton onClick={() => handleEditClick("name")} sx={{ ml: 1 }}>
-            <EditIcon />
-          </IconButton>
         </Box>
 
         {/* Email Field */}
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <TextField
             label="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            required
+            value={formState.email}
+            onChange={(e) =>
+              setFormState({ ...formState, email: e.target.value })
+            }
             variant="outlined"
             fullWidth
-            disabled={!isEditingEmail}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: 3,
@@ -140,20 +172,18 @@ const ProfilePage = () => {
               },
             }}
           />
-          <IconButton onClick={() => handleEditClick("email")} sx={{ ml: 1 }}>
-            <EditIcon />
-          </IconButton>
         </Box>
 
         {/* Major Field */}
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <TextField
             label="Major"
-            value={major}
-            onChange={(e) => setMajor(e.target.value)}
+            value={formState.major}
+            onChange={(e) =>
+              setFormState({ ...formState, major: e.target.value })
+            }
             variant="outlined"
             fullWidth
-            disabled={!isEditingMajor}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: 3,
@@ -173,21 +203,19 @@ const ProfilePage = () => {
               },
             }}
           />
-          <IconButton onClick={() => handleEditClick("major")} sx={{ ml: 1 }}>
-            <EditIcon />
-          </IconButton>
         </Box>
 
         {/* Year Field */}
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <TextField
-            label="Year"
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            variant="outlined"
-            fullWidth
-            disabled={!isEditingYear}
+          <Autocomplete
+            options={Object.values(YearEnum)}
+            value={formState.year}
+            onChange={(e, value) =>
+              setFormState({ ...formState, year: value as YearEnum })
+            }
+            renderInput={(params) => <TextField {...params} label="Year" />}
             sx={{
+              width: "100%",
               "& .MuiOutlinedInput-root": {
                 borderRadius: 3,
                 borderColor: "black",
@@ -206,46 +234,37 @@ const ProfilePage = () => {
               },
             }}
           />
-          <IconButton onClick={() => handleEditClick("year")} sx={{ ml: 1 }}>
-            <EditIcon />
-          </IconButton>
         </Box>
       </Box>
 
-      {}
-      {isEditingName || isEditingEmail || isEditingMajor || isEditingYear ? (
-        <Box
+      {/* Save Changes Button */}
+      <Box
+        sx={{
+          mt: 4,
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Button
+          variant="contained"
+          disabled={isSaving}
           sx={{
-            mt: 4,
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
+            width: "200px",
+            backgroundColor: "#3e94c9",
+            color: "black",
+            borderRadius: "8px",
+            padding: "10px",
+            textTransform: "none",
+            "&:hover": {
+              backgroundColor: "blue",
+            },
           }}
+          onClick={saveChanges}
         >
-          <Button
-            variant="contained"
-            sx={{
-              width: "200px",
-              backgroundColor: "#3e94c9",
-              color: "black",
-              borderRadius: "8px",
-              padding: "10px",
-              textTransform: "none",
-              "&:hover": {
-                backgroundColor: "blue",
-              },
-            }}
-            onClick={() => {
-              setIsEditingName(false);
-              setIsEditingEmail(false);
-              setIsEditingMajor(false);
-              setIsEditingYear(false);
-            }}
-          >
-            Save Changes
-          </Button>
-        </Box>
-      ) : null}
+          {isSaving ? <CircularProgress /> : "Save Changes"}
+        </Button>
+      </Box>
     </Box>
   );
 };

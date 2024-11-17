@@ -16,6 +16,7 @@ import {
   InputAdornment,
   Alert,
   Snackbar,
+  IconButton,
 } from "@mui/material";
 import {
   LocationOn,
@@ -345,6 +346,7 @@ const EditRideDetails = () => {
                     color="secondary"
                     startIcon={<Cancel />}
                     onClick={() => setRideData(initialRideData)}
+                    href="/home"
                   >
                     Cancel
                   </Button>
