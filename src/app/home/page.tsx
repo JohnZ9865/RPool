@@ -53,7 +53,18 @@ const Page = () => {
 
   useEffect(() => {
     getAllPostsData();
-  }, []);
+  }, [firestoreId]);
+
+  // Filter Current Groups: The logged-in user is a passenger in the group
+  const currentGroups = posts.allPosts.filter((post) =>
+    post.owner.id === firestoreId
+  );
+
+  // Filter Available Groups: The logged-in user is not part of the group (neither as a passenger nor the owner)
+  const availableGroups = posts.allPosts.filter(
+    (post) =>
+      post.owner.id !== firestoreId && !post.usersInRide.includes(firestoreId)
+  );
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -190,7 +201,7 @@ const Page = () => {
                   margin: "0 auto", // Center the grid container
                 }}
               >
-                {posts.userIsPassenger.map((post, index) => (
+                {currentGroups.map((post, index) => (
                   <Box
                     key={index}
                     sx={{
@@ -208,7 +219,11 @@ const Page = () => {
                       origin={post.originName}
                       destination={post.destinationName}
                       availableSeats={
-                        post.usersInRide + "/" + post.totalSeats.toString()
+                        post.totalSeats -
+                        post.usersInRide.length +
+                        " of " +
+                        post.totalSeats.toString() +
+                        " seats available"
                       }
                       date={formatDateTime(post.arrivalTime.seconds)}
                       price={
@@ -254,7 +269,7 @@ const Page = () => {
                   margin: "0 auto", // Center the grid container
                 }}
               >
-                {posts.allPosts.map((post, index) => (
+                {availableGroups.map((post, index) => (
                   <Box
                     key={index}
                     sx={{
