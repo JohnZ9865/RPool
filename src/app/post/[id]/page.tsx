@@ -136,15 +136,14 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
               {isLoading ? (
                 <CircularProgress size={24} />
               ) : !isUserOwner ? (
-                  <Button
-                    variant="contained"
-                    color={isUserInRide ? "error" : "success"}
-                    onClick={handleJoinOrLeaveRide}
-                  >
-                      {isUserInRide ? "Leave Ride" : "Join Ride"}
-                  </Button>
+                <Button
+                  variant="contained"
+                  color={isUserInRide ? "error" : "success"}
+                  onClick={handleJoinOrLeaveRide}
+                >
+                  {isUserInRide ? "Leave Ride" : "Join Ride"}
+                </Button>
               ) : null}
-              
             </Box>
 
             {/* Locations */}
