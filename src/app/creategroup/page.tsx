@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { StandaloneSearchBox, LoadScript } from "@react-google-maps/api";
 import {
   Card,
@@ -13,21 +13,26 @@ import {
   createTheme,
   TextField,
   Button,
-  InputAdornment,
   Alert,
   Snackbar,
-  IconButton,
+  CircularProgress,
 } from "@mui/material";
 import {
   LocationOn,
   AccessTime,
-  AttachMoney,
   Notes,
   Save,
   Cancel,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import { Library } from "@googlemaps/js-api-loader";
+import dayjs from "dayjs";
+import { api } from "@/utils/api";
+import { ExpectedInputAddPostInput } from "../api/post/add/route";
+import { useUserSession } from "@/hooks/useSession";
+import { ServiceSummary } from "../api/types/uber";
+import { EstimationExpectedInput, EstimationExpectedOutput } from "../api/estimation/route";
+import { useRouter } from "next/navigation";
 
 const libraries: Library[] = ["places"];
 
@@ -45,52 +50,40 @@ const LocationWrapper = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(3),
 }));
 
-// Define types for the ride data
-interface RideData {
-  title: string;
-  originLocation: {
+interface ForState {
+  title?: string;
+  totalSeats?: number;
+  originLocation?: {
     latitude: number;
     longitude: number;
+    name: string;
   };
-  destinationLocation: {
+  destinationLocation?: {
     latitude: number;
     longitude: number;
+    name: string;
   };
-  departureTime: {
-    seconds: number;
-  };
-  arrivalTime: {
-    seconds: number;
-  };
-  totalCost: number;
-  totalSeats: number;
-  notes: string;
+  departureTime?: Date;
+  arrivalTime?: Date;
+  notes?: string;
 }
 
+const initialData: ForState = {
+  title: "",
+  departureTime: dayjs().toDate(),
+  arrivalTime: dayjs().add(1, "hour").toDate(),
+  notes: "",
+};
 const EditRideDetails = () => {
   // Initial data
-  const initialRideData: RideData = {
-    title: "SF to LA",
-    originLocation: {
-      latitude: 37.7749,
-      longitude: -122.4194,
-    },
-    destinationLocation: {
-      latitude: 34.0522,
-      longitude: -118.2437,
-    },
-    departureTime: {
-      seconds: 1710954000,
-    },
-    arrivalTime: {
-      seconds: 1710975600,
-    },
-    totalCost: 45,
-    totalSeats: 4,
-    notes: "Direct route, 2 stops for breaks",
-  };
+  const { firestoreId } = useUserSession(null);
+  const [formState, setFormState] = useState<ForState>(initialData);
+  const [isSaving, setIsSaving] = useState(false);
+  const [costEstimate, setCostEstimate] = useState<ServiceSummary[]>([]);
+  const [selectedService, setSelectedService] = useState<string | null>(null);
 
-  const [rideData, setRideData] = useState<RideData>(initialRideData);
+  const router = useRouter();
+
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
@@ -105,57 +98,102 @@ const EditRideDetails = () => {
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const getCostEstimate = async () => {
+    if (!formState.originLocation || !formState.destinationLocation) {
+      return;
+    }
     try {
-      // Here you would typically make an API call to update the ride
-      // await updateRide(rideData);
-      setShowSuccess(true);
+      const estimationInput: EstimationExpectedInput = {
+        originLocation: {
+          latitude: formState.originLocation.latitude,
+          longitude: formState.originLocation.longitude,
+        },
+        destinationLocation: {
+          latitude: formState.destinationLocation.latitude,
+          longitude: formState.destinationLocation.longitude,
+        },
+      };
+      const response = await api({
+        method: "POST",
+        url: "/api/estimation",
+        body: estimationInput,
+      });
+      setCostEstimate(response.serviceSummaries);
     } catch (error) {
-      setShowError(true);
+      console.error("Error getting cost estimate", error);
     }
   };
 
-  const handlePlaceSelect = (
+  useEffect(() => {
+    // check if the longitude of the latitude have changed
+    if (formState.originLocation && formState.destinationLocation) {
+      getCostEstimate();
+    }
+  }, [formState.originLocation, formState.destinationLocation]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsSaving(true);
+      const costSelected = costEstimate.find((serviceSummary) => serviceSummary.name === selectedService);
+      const dateToSend: ExpectedInputAddPostInput = {
+        ownerId: firestoreId,
+        title: formState.title,
+        originLocation: formState.originLocation,
+        originName: formState.originLocation.name,
+        destinationLocation: formState.destinationLocation,
+        destinationName: formState.destinationLocation.name,
+        departureTime: formState.departureTime.toISOString(),
+        arrivalTime: formState.arrivalTime.toISOString(),
+        totalCost: costSelected?.pricing.totalFare || 0,
+        totalSeats: formState.totalSeats,
+        notes: formState.notes,
+      };
+      await api({
+        method: "POST",
+        url: "/api/post/add",
+        body: dateToSend,
+      });
+      setShowSuccess(true);
+      router.push("/home");
+    } catch (error) {
+      setShowError(true);
+    }
+    setIsSaving(false);
+  };
+
+  const handleSelectPlace = (
     type: "origin" | "destination",
     place: google.maps.places.PlaceResult | null,
   ) => {
     if (place && place.geometry) {
       const location = place.geometry.location;
-      setRideData((prev) => ({
+      const id = type === "origin" ? "originLocation" : "destinationLocation";
+      setFormState((prev) => ({
         ...prev,
-        [`${type}Location`]: {
+        [id]: {
           latitude: location.lat(),
           longitude: location.lng(),
+          name: place.name,
         },
       }));
     }
   };
 
-  const formatDateTimeForInput = (seconds: number) => {
-    const date = new Date(seconds * 1000);
+  const formatDateTimeForInput = (date: Date) => {
     return date.toISOString().slice(0, 16); // Format: "YYYY-MM-DDThh:mm"
   };
 
-  const handleDateTimeChange = (
-    type: "departure" | "arrival",
-    value: string,
-  ) => {
-    const date = new Date(value);
-    setRideData((prev) => ({
+  const handleChangeDateTime = (type: "departure" | "arrival", value: Date) => {
+    const id = type === "departure" ? "departureTime" : "arrivalTime";
+    setFormState((prev) => ({
       ...prev,
-      [`${type}Time`]: {
-        seconds: Math.floor(date.getTime() / 1000),
-      },
+      [id]: value,
     }));
   };
 
   const originRef = useRef<google.maps.places.SearchBox | null>(null);
   const destinationRef = useRef<google.maps.places.SearchBox | null>(null);
-  console.log(
-    "process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY",
-    process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-  );
 
   return (
     <LoadScript
@@ -172,9 +210,9 @@ const EditRideDetails = () => {
                   <TextField
                     fullWidth
                     label="Ride Title"
-                    value={rideData.title}
+                    value={formState.title}
                     onChange={(e) =>
-                      setRideData((prev) => ({
+                      setFormState((prev) => ({
                         ...prev,
                         title: e.target.value,
                       }))
@@ -185,9 +223,9 @@ const EditRideDetails = () => {
                   <TextField
                     label="Total Seats"
                     type="number"
-                    value={rideData.totalSeats}
+                    value={formState.totalSeats}
                     onChange={(e) =>
-                      setRideData((prev) => ({
+                      setFormState((prev) => ({
                         ...prev,
                         totalSeats: parseInt(e.target.value) || 0,
                       }))
@@ -211,7 +249,7 @@ const EditRideDetails = () => {
                         onPlacesChanged={() => {
                           const places = originRef.current?.getPlaces();
                           if (places && places.length > 0) {
-                            handlePlaceSelect("origin", places[0]);
+                            handleSelectPlace("origin", places[0]);
                           }
                         }}
                       >
@@ -235,7 +273,7 @@ const EditRideDetails = () => {
                         onPlacesChanged={() => {
                           const places = destinationRef.current?.getPlaces();
                           if (places && places.length > 0) {
-                            handlePlaceSelect("destination", places[0]);
+                            handleSelectPlace("destination", places[0]);
                           }
                         }}
                       >
@@ -258,12 +296,10 @@ const EditRideDetails = () => {
                         fullWidth
                         label="Departure Time"
                         type="datetime-local"
-                        value={formatDateTimeForInput(
-                          rideData.departureTime.seconds,
-                        )}
-                        onChange={(e) =>
-                          handleDateTimeChange("departure", e.target.value)
-                        }
+                        value={formatDateTimeForInput(formState.departureTime)}
+                        onChange={(e) => {
+                          handleChangeDateTime("departure", new Date(e.target.value))
+                        }}
                         InputLabelProps={{
                           shrink: true,
                         }}
@@ -278,10 +314,10 @@ const EditRideDetails = () => {
                         label="Arrival Time"
                         type="datetime-local"
                         value={formatDateTimeForInput(
-                          rideData.arrivalTime.seconds,
+                          formState.arrivalTime
                         )}
                         onChange={(e) =>
-                          handleDateTimeChange("arrival", e.target.value)
+                          handleChangeDateTime("arrival", new Date(e.target.value))
                         }
                         InputLabelProps={{
                           shrink: true,
@@ -291,28 +327,77 @@ const EditRideDetails = () => {
                   </Grid>
                 </Grid>
 
-                {/* Cost */}
-                <IconWrapper>
-                  <AttachMoney color="action" />
-                  <TextField
-                    fullWidth
-                    label="Total Cost"
-                    type="number"
-                    value={rideData.totalCost}
-                    onChange={(e) =>
-                      setRideData((prev) => ({
-                        ...prev,
-                        totalCost: parseInt(e.target.value) || 0,
-                      }))
-                    }
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">$</InputAdornment>
-                      ),
-                      inputProps: { min: 0 },
-                    }}
-                  />
-                </IconWrapper>
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h6" sx={{ mb: 2 }}>Available Ride Options</Typography>
+                  <Box sx={{
+                    display: "flex",
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: 2,
+                  }}>
+                    {costEstimate?.map((serviceSummary) => (
+                      <Card 
+                        sx={{
+                          flex: 1,
+                          minWidth: { xs: '100%', sm: '150px' },
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease-in-out',
+                          transform: selectedService === serviceSummary.name ? 'scale(1.02)' : 'scale(1)',
+                          border: selectedService === serviceSummary.name ? '2px solid #1976d2' : '1px solid #e0e0e0',
+                          '&:hover': {
+                            boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+                            transform: 'scale(1.02)',
+                          },
+                        }}
+                        key={serviceSummary.name}
+                        onClick={() => setSelectedService(serviceSummary.name)}
+                        elevation={selectedService === serviceSummary.name ? 4 : 1}
+                      >
+                        <CardContent sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          textAlign: 'center',
+                          p: 3,
+                        }}>
+                          <Typography 
+                            variant="h6" 
+                            sx={{
+                              mb: 2,
+                              color: selectedService === serviceSummary.name ? 'primary.main' : 'text.primary',
+                              fontWeight: 600,
+                            }}
+                          >
+                            {serviceSummary.name}
+                          </Typography>
+                          
+                          <Typography 
+                            variant="h5" 
+                            sx={{ 
+                              fontWeight: 'bold',
+                              color: selectedService === serviceSummary.name ? 'primary.main' : 'text.primary',
+                            }}
+                          >
+                            ${serviceSummary.pricing.totalFare}
+                          </Typography>
+
+                          {selectedService === serviceSummary.name && (
+                            <Box sx={{ 
+                              mt: 2,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'primary.main'
+                            }}>
+                              <Typography variant="body2">
+                                ✓ Selected
+                              </Typography>
+                            </Box>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </Box>
+                </Box>
 
                 {/* Notes */}
                 <IconWrapper>
@@ -322,9 +407,9 @@ const EditRideDetails = () => {
                     label="Notes"
                     multiline
                     rows={4}
-                    value={rideData.notes}
+                    value={formState.notes}
                     onChange={(e) =>
-                      setRideData((prev) => ({
+                      setFormState((prev) => ({
                         ...prev,
                         notes: e.target.value,
                       }))
@@ -345,7 +430,7 @@ const EditRideDetails = () => {
                     variant="outlined"
                     color="secondary"
                     startIcon={<Cancel />}
-                    onClick={() => setRideData(initialRideData)}
+                    onClick={() => setFormState(initialData)}
                     href="/home"
                   >
                     Cancel
@@ -354,9 +439,11 @@ const EditRideDetails = () => {
                     type="submit"
                     variant="contained"
                     color="primary"
+                    onClick={handleSubmit}
+                    disabled={isSaving}
                     startIcon={<Save />}
                   >
-                    Save Changes
+                    {isSaving ? <CircularProgress /> : "Save Changes"}
                   </Button>
                 </Box>
               </CardContent>
