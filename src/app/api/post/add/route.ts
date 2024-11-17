@@ -28,6 +28,7 @@ export interface ExpectedInputAddPostInput {
   totalCost: number;
   totalSeats: number;
   notes?: string;
+  carbonEmission: number;
 }
 
 export const POST = async (req: NextRequest) => {
@@ -49,6 +50,8 @@ export const POST = async (req: NextRequest) => {
       ? Timestamp.fromDate(new Date(input.arrivalTime))
       : undefined;
 
+    const carbonEmission = input.carbonEmission;
+
     const ownerRef = doc(db, USER_COLLECTION, input.ownerId);
     const documentBody = {
       owner: ownerRef,
@@ -63,6 +66,7 @@ export const POST = async (req: NextRequest) => {
       totalSeats: input.totalSeats,
       usersInRide: [ownerRef],
       notes: input.notes,
+      carbonEmission,
     };
 
     const docRef = await addDoc(collection(db, POST_COLLECTION), documentBody);
