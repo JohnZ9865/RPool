@@ -3,10 +3,10 @@ export const USER_COLLECTION = "users";
 export const getUserCollection = (id: string) => `${USER_COLLECTION}/${id}`;
 
 export enum YearEnum {
-  FRESHMAN = 1,
-  SOPHOMORE = 2,
-  JUNIOR = 3,
-  SENIOR = 4,
+  FRESHMAN = "Freshman",
+  SOPHOMORE = "Sophomore",
+  JUNIOR = "Junior",
+  SENIOR = "Senior",
 }
 
 export interface UserDocumentObject {

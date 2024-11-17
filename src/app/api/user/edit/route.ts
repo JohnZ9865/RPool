@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/utils/firebase";
-import { collection, addDoc, getDoc, doc, setDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import {
   USER_COLLECTION,
-  UserDocumentObject,
   YearEnum,
 } from "../../types/user";
 
 interface expectedInput {
+  id: string;
   name: string;
   email: string;
   major: string;
@@ -19,21 +19,12 @@ export const POST = async (req: NextRequest) => {
   const res = NextResponse;
 
   try {
-    const { name, email } = await req.json();
+    const input: Partial<expectedInput> = await req.json();
 
-    const documentBody = {
-      name,
-      email,
-      major: "",
-      year: YearEnum.FRESHMAN,
-      profilePictureUrl: "",
-    };
-    const docRef = await addDoc(collection(db, USER_COLLECTION), documentBody);
-
-    await setDoc(docRef, {
-      id: docRef.id,
-      ...documentBody,
-    });
+    if (input.id) {
+      const postRef = doc(db, USER_COLLECTION, input.id);
+      await updateDoc(postRef, input);
+    }
 
     return res.json({ message: "OK" }, { status: 200 });
   } catch (err) {
