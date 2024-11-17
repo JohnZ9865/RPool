@@ -8,8 +8,10 @@ import {
   Typography,
   IconButton,
   CircularProgress,
+  Button,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AddCircleIcon from "@mui/icons-material/AddCircle"; // Import the plus icon
 import Link from "next/link";
 import Timecard from "@/components/Timecard";
 import { GetAllResponse } from "../api/post/getAll/route";
@@ -69,6 +71,7 @@ const Page = () => {
             display: "flex",
             justifyContent: "space-between",
             width: "100%",
+            alignItems: "center",
           }}
         >
           {/* Title centered */}
@@ -94,6 +97,33 @@ const Page = () => {
           </Link>
         </Toolbar>
       </AppBar>
+
+      {/* Create Group Button (Center below header) */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: 4,
+        }}
+      >
+        <Link href="/creategroup" passHref>
+          <Button
+            variant="contained"
+            sx={{
+              background: "light-blue", // Gradient background
+              padding: "10px 20px",
+              fontSize: "16px",
+              fontWeight: "bold",
+              borderRadius: "8px",
+              alignItems: "center",
+              transition: "all 0.3s ease",
+            }}
+          >
+            <AddCircleIcon sx={{ marginRight: 1 }} /> {/* Add Plus Icon */}
+            Create Group
+          </Button>
+        </Link>
+      </Box>
 
       {/* Main Content */}
       <Box
@@ -213,6 +243,7 @@ const Page = () => {
                       price={
                         "$" + (post.totalCost / post.totalSeats).toString()
                       }
+                      
                     />
                   </Box>
                 ))}
