@@ -11,8 +11,6 @@ import { join } from "path/win32";
 const Login = ({ session }: { session: string | null }) => {
   const userSessionId = useUserSession(session).userUid;
 
-  console.log("firestore id", useUserSession(session));
-
   const handleSignIn = async () => {
     if (userSessionId != null) return;
 
