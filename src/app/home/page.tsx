@@ -56,14 +56,14 @@ const Page = () => {
   }, [firestoreId]);
 
   // Filter Current Groups: The logged-in user is a passenger in the group
-  const currentGroups = posts.allPosts.filter((post) =>
-    post.owner.id === firestoreId
+  const currentGroups = posts.allPosts.filter(
+    (post) => post.owner.id === firestoreId,
   );
 
   // Filter Available Groups: The logged-in user is not part of the group (neither as a passenger nor the owner)
   const availableGroups = posts.allPosts.filter(
     (post) =>
-      post.owner.id !== firestoreId && !post.usersInRide.includes(firestoreId)
+      post.owner.id !== firestoreId && !post.usersInRide.includes(firestoreId),
   );
 
   return (
@@ -227,7 +227,7 @@ const Page = () => {
                       }
                       date={formatDateTime(post.arrivalTime.seconds)}
                       price={
-                        "$" + (post.totalCost / post.totalSeats).toString()
+                        "$" + (post.totalCost / post.totalSeats).toFixed(2).toString()
                       }
                       id={post.id}
                     />
