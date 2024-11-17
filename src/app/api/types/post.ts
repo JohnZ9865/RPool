@@ -17,6 +17,7 @@ export interface RidePostingObject {
   title: string;
   originLocation: GeoPoint;
   originName: string;
+  id: string;
   destinationLocation: GeoPoint;
   destinationName: string;
   departureTime: Timestamp;

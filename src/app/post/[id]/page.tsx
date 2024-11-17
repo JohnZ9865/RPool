@@ -279,19 +279,6 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
           </CardContent>
         </Card>
       </Box>
-      <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
-        {isUserOwner && (
-          <Button
-            sx={{ width: "7%", fontSize: "1.2rem", height: "50px" }}
-            variant="contained"
-            LinkComponent={Link}
-            color="primary"
-            href={`/post/create?postId=${params.id}`}
-          >
-            Edit
-          </Button>
-        )}
-      </Box>
     </ThemeProvider>
   );
 };

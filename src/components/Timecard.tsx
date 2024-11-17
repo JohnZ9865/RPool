@@ -5,6 +5,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import Face5Icon from "@mui/icons-material/Face5";
 import Button from "@mui/material/Button";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import { Typography } from "@mui/material";
 import Link from "next/link";
 
 interface TimecardProps {
@@ -12,8 +13,8 @@ interface TimecardProps {
   destination: string;
   availableSeats: string;
   date: string;
-  time: string;
   price: string;
+  id: string;
 }
 
 const Timecard: React.FC<TimecardProps> = ({
@@ -21,15 +22,15 @@ const Timecard: React.FC<TimecardProps> = ({
   destination,
   availableSeats,
   date,
-  time,
   price,
+  id,
 }) => {
   return (
     <div>
       <Box
         sx={{
           width: 300,
-          height: 250,
+          height: 220,
           borderRadius: 8,
           bgcolor: "gold",
           border: "2px solid black",
@@ -71,27 +72,15 @@ const Timecard: React.FC<TimecardProps> = ({
               marginTop: "-25px",
             }}
           >
-            <AccessTimeIcon
-              sx={{ padding: "20px", fontSize: 25, color: "black" }}
-            />
-            {time}
-          </Box>
-        </div>
-        <div>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              marginTop: "-25px",
-            }}
-          >
             <Face5Icon sx={{ padding: "20px", fontSize: 25, color: "black" }} />
-            {availableSeats}
+            <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+              {availableSeats}
+            </Typography>
           </Box>
           <Box sx={{ display: "inline-flex", alignItems: "center" }}>
             <Button
               LinkComponent={Link}
-              href={`/post/`}
+              href={`/post/${id}`}
               variant="contained"
               sx={{ marginTop: "-20px", marginLeft: "20px" }}
             >

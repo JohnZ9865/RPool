@@ -48,7 +48,7 @@ const Login = ({ session }: { session: string | null }) => {
           mb: 4, // Spacing below header
         }}
       >
-        Pool safe, pool smart. Travel with R' Pool.
+        Ain't no pool like an R' Pool.
       </Box>
 
       {/* Google Sign-in Button */}

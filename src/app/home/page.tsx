@@ -180,23 +180,37 @@ const Page = () => {
               </Typography>
               <Box
                 sx={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", // Responsive grid
-                  gap: 3,
+                  display: "flex",
+                  flexWrap: "wrap", // Allow wrapping of items onto the next row
+                  justifyContent: "space-between", // Distribute space evenly between items
                   marginTop: 2,
+                  gap: 3, // Space between each Timecard
+                  width: "100%",
+                  maxWidth: "1200px", // Maximum width for the container
+                  margin: "0 auto", // Center the grid container
                 }}
               >
                 {posts.userIsPassenger.map((post, index) => (
-                  <Box key={index}>
+                  <Box
+                    key={index}
+                    sx={{
+                      flexBasis: "calc(33.33% - 20px)", // Ensure each item takes 1/3 of the width minus the gap
+                      boxSizing: "border-box", // Include padding and margin in the element's total width and height
+                      '@media (max-width: 900px)': {
+                        flexBasis: "calc(50% - 20px)", // For medium screens, 2 columns
+                      },
+                      '@media (max-width: 600px)': {
+                        flexBasis: "100%", // For small screens, 1 column
+                      },
+                    }}
+                  >
                     <Timecard
                       origin={post.originName}
                       destination={post.destinationName}
-                      availableSeats={post.totalSeats.toString()}
+                      availableSeats={post.usersInRide + "/" + post.totalSeats.toString()}
                       date={formatDateTime(post.arrivalTime.seconds)}
-                      time={post.totalSeats.toString()}
-                      price={
-                        "$" + (post.totalCost / post.totalSeats).toString()
-                      }
+                      price={"$" + (post.totalCost / post.totalSeats).toString()}
+                      id={post.id}
                     />
                   </Box>
                 ))}
@@ -226,23 +240,37 @@ const Page = () => {
               </Typography>
               <Box
                 sx={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", // Responsive grid
-                  gap: 3,
+                  display: "flex",
+                  flexWrap: "wrap", // Allow wrapping of items onto the next row
+                  justifyContent: "space-between", // Distribute space evenly between items
                   marginTop: 2,
+                  gap: 3, // Space between each Timecard
+                  width: "100%",
+                  maxWidth: "1200px", // Maximum width for the container
+                  margin: "0 auto", // Center the grid container
                 }}
               >
                 {posts.allPosts.map((post, index) => (
-                  <Box key={index}>
+                  <Box
+                    key={index}
+                    sx={{
+                      flexBasis: "calc(33.33% - 20px)", // Ensure each item takes 1/3 of the width minus the gap
+                      boxSizing: "border-box", // Include padding and margin in the element's total width and height
+                      '@media (max-width: 900px)': {
+                        flexBasis: "calc(50% - 20px)", // For medium screens, 2 columns
+                      },
+                      '@media (max-width: 600px)': {
+                        flexBasis: "100%", // For small screens, 1 column
+                      },
+                    }}
+                  >
                     <Timecard
                       origin={post.originName}
                       destination={post.destinationName}
-                      availableSeats={post.totalSeats.toString()}
+                      availableSeats={post.totalSeats - post.usersInRide.length + " of " + post.totalSeats.toString() + " seats available"}
                       date={formatDateTime(post.arrivalTime.seconds)}
-                      time={post.totalSeats.toString()}
-                      price={
-                        "$" + (post.totalCost / post.totalSeats).toString()
-                      }
+                      price={"$" + (post.totalCost / post.totalSeats).toFixed(2).toString()}
+                      id={post.id}
                     />
                   </Box>
                 ))}
