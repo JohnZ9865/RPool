@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/utils/firebase";
 import { doc, updateDoc } from "firebase/firestore";
-import {
-  USER_COLLECTION,
-  YearEnum,
-} from "../../types/user";
+import { USER_COLLECTION, YearEnum } from "../../types/user";
 
 interface expectedInput {
   id: string;

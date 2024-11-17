@@ -59,7 +59,7 @@ const ProfilePage = () => {
   }, [firestoreId]);
 
   if (isLoading) {
-    return <LinearProgress />
+    return <LinearProgress />;
   }
 
   return (
@@ -116,7 +116,9 @@ const ProfilePage = () => {
             required
             label="Name"
             value={formState.name}
-            onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+            onChange={(e) =>
+              setFormState({ ...formState, name: e.target.value })
+            }
             variant="outlined"
             fullWidth
             sx={{
@@ -146,7 +148,9 @@ const ProfilePage = () => {
             label="Email"
             required
             value={formState.email}
-            onChange={(e) => setFormState({ ...formState, email: e.target.value })}
+            onChange={(e) =>
+              setFormState({ ...formState, email: e.target.value })
+            }
             variant="outlined"
             fullWidth
             sx={{
@@ -175,7 +179,9 @@ const ProfilePage = () => {
           <TextField
             label="Major"
             value={formState.major}
-            onChange={(e) => setFormState({ ...formState, major: e.target.value })}
+            onChange={(e) =>
+              setFormState({ ...formState, major: e.target.value })
+            }
             variant="outlined"
             fullWidth
             sx={{
@@ -204,7 +210,9 @@ const ProfilePage = () => {
           <Autocomplete
             options={Object.values(YearEnum)}
             value={formState.year}
-            onChange={(e, value) => setFormState({ ...formState, year: value as YearEnum })}
+            onChange={(e, value) =>
+              setFormState({ ...formState, year: value as YearEnum })
+            }
             renderInput={(params) => <TextField {...params} label="Year" />}
             sx={{
               width: "100%",
@@ -230,33 +238,33 @@ const ProfilePage = () => {
       </Box>
 
       {/* Save Changes Button */}
-        <Box
+      <Box
+        sx={{
+          mt: 4,
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Button
+          variant="contained"
+          disabled={isSaving}
           sx={{
-            mt: 4,
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
+            width: "200px",
+            backgroundColor: "#3e94c9",
+            color: "black",
+            borderRadius: "8px",
+            padding: "10px",
+            textTransform: "none",
+            "&:hover": {
+              backgroundColor: "blue",
+            },
           }}
+          onClick={saveChanges}
         >
-          <Button
-            variant="contained"
-            disabled={isSaving}
-            sx={{
-              width: "200px",
-              backgroundColor: "#3e94c9",
-              color: "black",
-              borderRadius: "8px",
-              padding: "10px",
-              textTransform: "none",
-              "&:hover": {
-                backgroundColor: "blue",
-              },
-            }}
-            onClick={saveChanges}
-          >
-            {isSaving ? <CircularProgress /> : "Save Changes"}
-          </Button>
-        </Box>
+          {isSaving ? <CircularProgress /> : "Save Changes"}
+        </Button>
+      </Box>
     </Box>
   );
 };
