@@ -120,24 +120,24 @@ export const getEmissionsEstimation = (
 ): CarbonEstimateReturn => {
   let emission = 0;
   switch (name) {
-      case "Uber Black":
-        emission = 0.005;
-        break;
-      case "Uber Comfort Electric":
-        emission = 0.001;
-        break;
-      case "Uber X":
-        emission = 0.003;
-        break;
-      case "Uber XL":
-        emission = 0.004;
-        break;
-    }
+    case "Uber Black":
+      emission = 0.005;
+      break;
+    case "Uber Comfort Electric":
+      emission = 0.001;
+      break;
+    case "Uber X":
+      emission = 0.003;
+      break;
+    case "Uber XL":
+      emission = 0.004;
+      break;
+  }
 
-    return {
-      name: name,
-      emissions: duration * emission,
-    };
+  return {
+    name: name,
+    emissions: duration * emission,
+  };
 };
 
 function parseRateInfo(notes: string[]): {
@@ -162,7 +162,10 @@ function parseRateInfo(notes: string[]): {
   return rates;
 }
 
-export function getServiceSummary(data: UberServiceData, duration: number): ServiceSummary {
+export function getServiceSummary(
+  data: UberServiceData,
+  duration: number,
+): ServiceSummary {
   // Get capacity
   const capacityString = data.service?.filters?.capacity[0];
   const capacity = parseInt(capacityString);
@@ -182,8 +185,11 @@ export function getServiceSummary(data: UberServiceData, duration: number): Serv
     })),
     rateInfo: parseRateInfo(data.notes),
   };
-  
-  const emissionsEstimation = getEmissionsEstimation(data.service?.name, duration);
+
+  const emissionsEstimation = getEmissionsEstimation(
+    data.service?.name,
+    duration,
+  );
 
   return {
     name: data.service?.name,

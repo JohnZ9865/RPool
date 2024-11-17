@@ -31,9 +31,7 @@ import { api } from "@/utils/api";
 import { ExpectedInputAddPostInput } from "../api/post/add/route";
 import { useUserSession } from "@/hooks/useSession";
 import { ServiceSummary } from "../api/types/uber";
-import {
-  EstimationExpectedInput,
-} from "../api/estimation/route";
+import { EstimationExpectedInput } from "../api/estimation/route";
 import { useRouter } from "next/navigation";
 
 const libraries: Library[] = ["places"];
@@ -407,7 +405,8 @@ const EditRideDetails = () => {
                                   : "text.primary",
                             }}
                           >
-                            ${serviceSummary.pricing.totalFare}{'\n'}
+                            ${serviceSummary.pricing.totalFare}
+                            {"\n"}
                             {Math.trunc(serviceSummary.emmisionEstimate)} Kg CO2
                           </Typography>
 
