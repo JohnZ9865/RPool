@@ -84,7 +84,7 @@ const Login = ({ session }: { session: string | null }) => {
             Sign in with Google
           </Typography>
         </Button>
-        User session ID {userSessionId}
+        {/* User session ID {userSessionId} */}
       </Box>
     </Box>
   );
