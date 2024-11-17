@@ -115,4 +115,5 @@ export interface ServiceSummary {
   name: string;
   capacity: number;
   pricing: ServicePriceInfo;
+  emmisionEstimate: number;
 }

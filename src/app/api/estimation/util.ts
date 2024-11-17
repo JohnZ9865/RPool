@@ -6,7 +6,7 @@ import {
   UberServiceData,
 } from "../types/uber";
 
-const getPolyLine = async (
+export const getPolyLine = async (
   originLocation: MyGeoPoint,
   destinationLocation: MyGeoPoint,
 ): Promise<{
@@ -114,33 +114,30 @@ export interface CarbonEstimateReturn {
   emissions: number;
 }
 
-export const getEmissionsEstimation = async (
-  serviceSummaries: ServiceSummary[],
-  originLocation: MyGeoPoint,
-  destinationLocation: MyGeoPoint,
-): Promise<CarbonEstimateReturn[]> => {
-  const { duration } = await getPolyLine(originLocation, destinationLocation);
-  return serviceSummaries.map((serviceSummary) => {
-    let emissionsFactor = 0.0005; // Default emissions factor
-    switch (serviceSummary.name) {
+export const getEmissionsEstimation = (
+  name: string,
+  duration: number,
+): CarbonEstimateReturn => {
+  let emission = 0;
+  switch (name) {
       case "Uber Black":
-        emissionsFactor = 0.0001;
+        emission = 0.005;
         break;
       case "Uber Comfort Electric":
-        emissionsFactor = 0.0002;
+        emission = 0.001;
         break;
       case "Uber X":
-        emissionsFactor = 0.0003;
+        emission = 0.003;
         break;
       case "Uber XL":
-        emissionsFactor = 0.0004;
+        emission = 0.004;
         break;
     }
+
     return {
-      name: serviceSummary.name,
-      emissions: duration * emissionsFactor,
+      name: name,
+      emissions: duration * emission,
     };
-  });
 };
 
 function parseRateInfo(notes: string[]): {
@@ -165,7 +162,7 @@ function parseRateInfo(notes: string[]): {
   return rates;
 }
 
-export function getServiceSummary(data: UberServiceData): ServiceSummary {
+export function getServiceSummary(data: UberServiceData, duration: number): ServiceSummary {
   // Get capacity
   const capacityString = data.service?.filters?.capacity[0];
   const capacity = parseInt(capacityString);
@@ -185,10 +182,13 @@ export function getServiceSummary(data: UberServiceData): ServiceSummary {
     })),
     rateInfo: parseRateInfo(data.notes),
   };
+  
+  const emissionsEstimation = getEmissionsEstimation(data.service?.name, duration);
 
   return {
     name: data.service?.name,
     capacity,
     pricing,
+    emmisionEstimate: emissionsEstimation.emissions,
   };
 }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getEstimation,
   getServiceSummary,
-  getEmissionsEstimation,
+  getPolyLine,
 } from "./util";
 import { ServiceSummary } from "../types/uber";
 
@@ -25,26 +25,22 @@ export const POST = async (req: NextRequest) => {
   try {
     const input: EstimationExpectedInput = await req.json();
 
+    const { duration } = await getPolyLine(
+      input.originLocation,
+      input.destinationLocation,
+    );
+
     const priceEstimation = await getEstimation(
       input.originLocation,
       input.destinationLocation,
     );
 
-    const serviceSummaries =
-      priceEstimation.fare_estimates.map(getServiceSummary);
-
-    // const emissionsEstimations = await Promise.all(
-    //   serviceSummaries.map((serviceSummary) =>
-    //     getEmissionsEstimation(
-    //       serviceSummary,
-    //       input.originLocation,
-    //       input.destinationLocation,
-    //     ),
-    //   ),
-    // );
+    const serviceSummaries = priceEstimation.fare_estimates.map((t) =>
+      getServiceSummary(t, duration),
+    );
 
     return res.json(
-      { message: "OK", serviceSummaries, emissionsEstimations },
+      { message: "OK", serviceSummaries },
       { status: 200 },
     );
   } catch (err) {

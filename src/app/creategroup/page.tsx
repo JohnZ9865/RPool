@@ -33,10 +33,8 @@ import { useUserSession } from "@/hooks/useSession";
 import { ServiceSummary } from "../api/types/uber";
 import {
   EstimationExpectedInput,
-  EstimationExpectedOutput,
 } from "../api/estimation/route";
 import { useRouter } from "next/navigation";
-import { CarbonEstimateReturn } from "@/app/api/estimation/util";
 
 const libraries: Library[] = ["places"];
 
@@ -84,9 +82,6 @@ const EditRideDetails = () => {
   const [formState, setFormState] = useState<ForState>(initialData);
   const [isSaving, setIsSaving] = useState(false);
   const [costEstimate, setCostEstimate] = useState<ServiceSummary[]>([]);
-  const [carbonEstimates, setCarbonEstimates] = useState<
-    CarbonEstimateReturn[]
-  >([]);
   const [selectedService, setSelectedService] = useState<string | null>(null);
 
   const router = useRouter();
@@ -127,7 +122,6 @@ const EditRideDetails = () => {
       });
       console.log(response);
       setCostEstimate(response.serviceSummaries);
-      // setCarbonEstimates(response.emissionsEstimations);
     } catch (error) {
       console.error("Error getting cost estimate", error);
     }
@@ -159,6 +153,7 @@ const EditRideDetails = () => {
         totalCost: costSelected?.pricing.totalFare || 0,
         totalSeats: formState.totalSeats,
         notes: formState.notes,
+        carbonEmission: costSelected?.emmisionEstimate || 0,
       };
       await api({
         method: "POST",
@@ -412,7 +407,8 @@ const EditRideDetails = () => {
                                   : "text.primary",
                             }}
                           >
-                            ${serviceSummary.pricing.totalFare}
+                            ${serviceSummary.pricing.totalFare}{'\n'}
+                            {Math.trunc(serviceSummary.emmisionEstimate)} Kg CO2
                           </Typography>
 
                           {selectedService === serviceSummary.name && (
