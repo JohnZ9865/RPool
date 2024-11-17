@@ -14,6 +14,8 @@ import {
   ThemeProvider,
   createTheme,
   LinearProgress,
+  Button,
+  CircularProgress,
 } from "@mui/material";
 import {
   LocationOn,
@@ -23,8 +25,10 @@ import {
   Notes,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
-import { PopulatedPostingObject, POST_COLLECTION } from "@/app/api/types/post";
+import { PopulatedPostingObject } from "@/app/api/types/post";
 import { api } from "@/utils/api";
+import { useUserSession } from "@/hooks/useSession";
+import Link from "next/link";
 
 // Create custom styled components
 const IconWrapper = styled(Box)(({ theme }) => ({
@@ -41,10 +45,32 @@ const LocationWrapper = styled(Box)(({ theme }) => ({
 }));
 
 const RideDetails = ({ params }: { params: { id: string } }) => {
-  console.log(params);
+  const { firestoreId } = useUserSession(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [ridePost, setRidePost] = useState<PopulatedPostingObject | undefined>(
     undefined,
   );
+
+  const isUserInRide = ridePost?.usersInRide.some(
+    (user) => user.id === firestoreId,
+  );
+
+  const isUserOwner = ridePost?.owner.id === firestoreId;
+
+  const handleJoinOrLeaveRide = async () => {
+    setIsLoading(true);
+    await api({
+      method: "POST",
+      url: `/api/post/join_or_leave`,
+      body: {
+        postId: params.id,
+        userId: firestoreId,
+      },
+    });
+    fetchRidePost();
+    setIsLoading(false);
+  };
 
   const fetchRidePost = async () => {
     try {
@@ -57,8 +83,6 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
       console.log(err);
     }
   };
-
-  console.log(ridePost);
 
   useEffect(() => {
     fetchRidePost();
@@ -109,12 +133,18 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
               <Typography variant="h4" component="h1" gutterBottom>
                 {ridePost.title}
               </Typography>
-              <Chip
-                icon={<Group />}
-                label={`${ridePost.totalSeats} seats total`}
-                color="primary"
-                variant="outlined"
-              />
+              {isLoading ? (
+                <CircularProgress size={24} />
+              ) : !isUserOwner ? (
+                  <Button
+                    variant="contained"
+                    color={isUserInRide ? "error" : "success"}
+                    onClick={handleJoinOrLeaveRide}
+                  >
+                      {isUserInRide ? "Leave Ride" : "Join Ride"}
+                  </Button>
+              ) : null}
+              
             </Box>
 
             {/* Locations */}
@@ -209,6 +239,19 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
             </IconWrapper>
           </CardContent>
         </Card>
+      </Box>
+      <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+        {isUserOwner && (
+          <Button
+            sx={{ width: "7%", fontSize: "1.2rem", height: "50px" }}
+            variant="contained"
+            LinkComponent={Link}
+            color="primary"
+            href={`/post/create?postId=${params.id}`}
+          >
+            Edit
+          </Button>
+        )}
       </Box>
     </ThemeProvider>
   );
