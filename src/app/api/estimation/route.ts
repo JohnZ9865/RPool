@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getEstimation, getServiceSummary, getEmissionsEstimation } from "./util";
+import {
+  getEstimation,
+  getServiceSummary,
+  getEmissionsEstimation,
+} from "./util";
 import { ServiceSummary } from "../types/uber";
 
 export interface MyGeoPoint {
@@ -39,7 +43,10 @@ export const POST = async (req: NextRequest) => {
     //   ),
     // );
 
-    return res.json({ message: "OK", serviceSummaries, emissionsEstimations }, { status: 200 });
+    return res.json(
+      { message: "OK", serviceSummaries, emissionsEstimations },
+      { status: 200 },
+    );
   } catch (err) {
     return res.json(
       { message: `Internal Server Error: ${err}` },

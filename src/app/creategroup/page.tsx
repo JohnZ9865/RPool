@@ -84,7 +84,9 @@ const EditRideDetails = () => {
   const [formState, setFormState] = useState<ForState>(initialData);
   const [isSaving, setIsSaving] = useState(false);
   const [costEstimate, setCostEstimate] = useState<ServiceSummary[]>([]);
-  const [carbonEstimates, setCarbonEstimates] = useState<CarbonEstimateReturn[]>([]);
+  const [carbonEstimates, setCarbonEstimates] = useState<
+    CarbonEstimateReturn[]
+  >([]);
   const [selectedService, setSelectedService] = useState<string | null>(null);
 
   const router = useRouter();
