@@ -98,7 +98,7 @@ const Timecard: React.FC<TimecardProps> = ({
               style={{
                 marginLeft: "40px",
                 marginTop: "-20px",
-                fontSize: 25,
+                fontSize: 20,
                 color: "black",
               }}
             >
