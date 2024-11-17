@@ -261,7 +261,7 @@ const RideDetails = ({ params }: { params: { id: string } }) => {
                   Total Cost
                 </Typography>
                 <Typography variant="body1" fontWeight="medium">
-                  ${ridePost.totalCost}
+                  ${ridePost.totalCost} -- Kg CO2 {ridePost.carbonEmission || 0}
                 </Typography>
               </Box>
             </IconWrapper>

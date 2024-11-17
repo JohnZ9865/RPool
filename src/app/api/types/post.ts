@@ -26,4 +26,5 @@ export interface RidePostingObject {
   totalSeats: number;
   usersInRide: DocumentReference[];
   notes?: string;
+  carbonEmission?: number;
 }
