@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getEstimation, getServiceSummary } from "./util";
+import { getEstimation, getServiceSummary, getEmissionsEstimation } from "./util";
 import { ServiceSummary } from "../types/uber";
 
 export interface MyGeoPoint {
@@ -26,10 +26,20 @@ export const POST = async (req: NextRequest) => {
       input.destinationLocation,
     );
 
-    const serviceSummaries: ServiceSummary[] =
+    const serviceSummaries =
       priceEstimation.fare_estimates.map(getServiceSummary);
 
-    return res.json({ message: "OK", serviceSummaries }, { status: 200 });
+    // const emissionsEstimations = await Promise.all(
+    //   serviceSummaries.map((serviceSummary) =>
+    //     getEmissionsEstimation(
+    //       serviceSummary,
+    //       input.originLocation,
+    //       input.destinationLocation,
+    //     ),
+    //   ),
+    // );
+
+    return res.json({ message: "OK", serviceSummaries, emissionsEstimations }, { status: 200 });
   } catch (err) {
     return res.json(
       { message: `Internal Server Error: ${err}` },
