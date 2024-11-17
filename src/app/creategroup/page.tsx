@@ -15,7 +15,7 @@ import {
   Button,
   InputAdornment,
   Alert,
-  Snackbar,
+  Snackbar, IconButton
 } from "@mui/material";
 import {
   LocationOn,
@@ -27,6 +27,7 @@ import {
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import { Library } from "@googlemaps/js-api-loader";
+
 
 const libraries: Library[] = ["places"];
 
@@ -345,6 +346,7 @@ const EditRideDetails = () => {
                     color="secondary"
                     startIcon={<Cancel />}
                     onClick={() => setRideData(initialRideData)}
+                    href="/home"
                   >
                     Cancel
                   </Button>
