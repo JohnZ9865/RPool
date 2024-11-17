@@ -88,21 +88,55 @@ export const doesEmailExist = async (targetEmail: string): Promise<boolean> => {
   }
 };
 
+//enter name + email + id. So create a doc. Store the id in the doc too.
+const createUserDocument = async (name, email, photoURL) => {
+  try {
+    const db = getFirestore(); // Initialize Firestore
+    const userRef = doc(collection(db, "users")); // Create a new document reference in 'users'
+    const docId = userRef.id; // Get the auto-generated document ID
+
+    console.log("our newly created ID", docId, "endID");
+    await new Promise((resolve) => setTimeout(resolve, 70000));
+
+    // Set the document with the provided attributes, including the ID
+    await setDoc(userRef, {
+      id: docId, // Include the document ID in the document data
+      name,
+      email,
+      photoUrl: photoURL,
+    });
+
+    console.log("User document created successfully with ID:", docId);
+  } catch (error) {
+    console.error("Error creating user document:", error);
+  }
+};
+
 //pop up version:
 export async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
 
   try {
     const result = await signInWithPopup(firebaseAuth, provider);
+    // console.log("our result when trying to sign in", result, "end result");
+
+    // await new Promise(resolve => setTimeout(resolve, 70000));
     if (!result || !result.user) {
       throw new Error("Google sign in failed");
     }
     const targetEmail = result.user.email;
     const existness = await doesEmailExist(targetEmail);
-    console.log("sign in with google firebase.ts", existness, "end existness");
 
     if (existness) {
       //directs to home
+      const photoURL = result.user.photoURL;
+      const email = result.user.email;
+      const name = result.user.displayName;
+
+      await new Promise((resolve) => setTimeout(resolve, 50000));
+      console.log("right before createUserDocument");
+      createUserDocument(name, email, photoURL);
+
       window.location.href = "/home";
     } else {
       //redirect to /signup page.
