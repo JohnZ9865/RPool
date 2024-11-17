@@ -243,7 +243,6 @@ const Page = () => {
                       price={
                         "$" + (post.totalCost / post.totalSeats).toString()
                       }
-                      
                     />
                   </Box>
                 ))}

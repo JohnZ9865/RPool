@@ -14,7 +14,6 @@ interface TimecardProps {
   date: string;
   time: string;
   price: string;
-  
 }
 
 const Timecard: React.FC<TimecardProps> = ({
@@ -92,7 +91,7 @@ const Timecard: React.FC<TimecardProps> = ({
           <Box sx={{ display: "inline-flex", alignItems: "center" }}>
             <Button
               LinkComponent={Link}
-              href={`/post/`} 
+              href={`/post/`}
               variant="contained"
               sx={{ marginTop: "-20px", marginLeft: "20px" }}
             >
