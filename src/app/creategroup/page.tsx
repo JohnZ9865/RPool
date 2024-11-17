@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
+import { StandaloneSearchBox, LoadScript } from "@react-google-maps/api";
 import {
   Card,
   CardContent,
@@ -25,6 +26,9 @@ import {
   Cancel,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
+import { Library } from "@googlemaps/js-api-loader";
+
+const libraries: Library[] = ["places"];
 
 // Create custom styled components
 const IconWrapper = styled(Box)(({ theme }) => ({
@@ -63,13 +67,6 @@ interface RideData {
 }
 
 const EditRideDetails = () => {
-  const [autocompleteService, setAutocompleteService] = useState<any>(null);
-  const [placesService, setPlacesService] = useState<any>(null);
-  const [originOptions, setOriginOptions] = useState<any[]>([]);
-  const [destinationOptions, setDestinationOptions] = useState<any[]>([]);
-  const [originLoading, setOriginLoading] = useState(false);
-  const [destinationLoading, setDestinationLoading] = useState(false);
-
   // Initial data
   const initialRideData: RideData = {
     title: "SF to LA",
@@ -118,19 +115,17 @@ const EditRideDetails = () => {
     }
   };
 
-  const handleLocationChange = (
-    type: "origin" | "destination",
-    coord: "latitude" | "longitude",
-    value: string,
-  ) => {
-    const numValue = parseFloat(value) || 0;
-    setRideData((prev) => ({
-      ...prev,
-      [`${type}Location`]: {
-        ...prev[`${type}Location`],
-        [coord]: numValue,
-      },
-    }));
+  const handlePlaceSelect = (type: "origin" | "destination", place: google.maps.places.PlaceResult | null) => {
+    if (place && place.geometry) {
+      const location = place.geometry.location;
+      setRideData((prev) => ({
+        ...prev,
+        [`${type}Location`]: {
+          latitude: location.lat(),
+          longitude: location.lng(),
+        },
+      }));
+    }
   };
 
   const formatDateTimeForInput = (seconds: number) => {
@@ -151,7 +146,12 @@ const EditRideDetails = () => {
     }));
   };
 
+  const originRef = useRef<google.maps.places.SearchBox | null>(null);
+  const destinationRef = useRef<google.maps.places.SearchBox | null>(null);
+  console.log('process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY', process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)
+
   return (
+    <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY} libraries={libraries}>
     <ThemeProvider theme={theme}>
       <Box sx={{ maxWidth: 800, margin: "auto", p: 2 }}>
         <form onSubmit={handleSubmit}>
@@ -193,48 +193,21 @@ const EditRideDetails = () => {
                     <Typography variant="subtitle2" color="textSecondary">
                       Departure Location
                     </Typography>
-                    <Grid container spacing={2}>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          label="Latitude"
-                          type="number"
-                          value={rideData.originLocation.latitude}
-                          onChange={(e) =>
-                            handleLocationChange(
-                              "origin",
-                              "latitude",
-                              e.target.value,
-                            )
-                          }
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">°N</InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          label="Longitude"
-                          type="number"
-                          value={rideData.originLocation.longitude}
-                          onChange={(e) =>
-                            handleLocationChange(
-                              "origin",
-                              "longitude",
-                              e.target.value,
-                            )
-                          }
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">°W</InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
-                    </Grid>
+                    <StandaloneSearchBox
+                      onLoad={(ref) => (originRef.current = ref)}
+                      onPlacesChanged={() => {
+                        const places = originRef.current?.getPlaces();
+                        if (places && places.length > 0) {
+                          handlePlaceSelect("origin", places[0]);
+                        }
+                      }}
+                    >
+                      <TextField
+                        fullWidth
+                        label="Search for a place"
+                        variant="outlined"
+                      />
+                    </StandaloneSearchBox>
                   </Box>
                 </LocationWrapper>
 
@@ -244,51 +217,25 @@ const EditRideDetails = () => {
                     <Typography variant="subtitle2" color="textSecondary">
                       Destination Location
                     </Typography>
-                    <Grid container spacing={2}>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          label="Latitude"
-                          type="number"
-                          value={rideData.destinationLocation.latitude}
-                          onChange={(e) =>
-                            handleLocationChange(
-                              "destination",
-                              "latitude",
-                              e.target.value,
-                            )
-                          }
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">°N</InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <TextField
-                          fullWidth
-                          label="Longitude"
-                          type="number"
-                          value={rideData.destinationLocation.longitude}
-                          onChange={(e) =>
-                            handleLocationChange(
-                              "destination",
-                              "longitude",
-                              e.target.value,
-                            )
-                          }
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">°W</InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
-                    </Grid>
+                    <StandaloneSearchBox
+                      onLoad={(ref) => (destinationRef.current = ref)}
+                      onPlacesChanged={() => {
+                        const places = destinationRef.current?.getPlaces();
+                        if (places && places.length > 0) {
+                          handlePlaceSelect("destination", places[0]);
+                        }
+                      }}
+                    >
+                      <TextField
+                        fullWidth
+                        label="Search for a place"
+                        variant="outlined"
+                      />
+                    </StandaloneSearchBox>
                   </Box>
                 </LocationWrapper>
               </Paper>
+
 
               {/* Time */}
               <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -422,6 +369,7 @@ const EditRideDetails = () => {
         </Snackbar>
       </Box>
     </ThemeProvider>
+  </LoadScript>
   );
 };
 
