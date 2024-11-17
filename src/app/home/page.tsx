@@ -63,7 +63,8 @@ const Page = () => {
   // Filter Available Groups: The logged-in user is not part of the group (neither as a passenger nor the owner)
   const availableGroups = posts.allPosts.filter(
     (post) =>
-      post.owner.id !== firestoreId && !post.usersInRide.some((t) => t.id === firestoreId),
+      post.owner.id !== firestoreId &&
+      !post.usersInRide.some((t) => t.id === firestoreId),
   );
 
   return (
