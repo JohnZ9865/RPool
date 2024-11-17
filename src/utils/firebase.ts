@@ -131,8 +131,8 @@ export async function signInWithGoogle() {
     const targetEmail = result.user.email;
     console.log("still working", targetEmail);
 
-    // const existness = await doesEmailExist(targetEmail);
-    const existness = false;
+    const existness = await doesEmailExist(targetEmail);
+    // const existness = false;
     console.log("existness statement", existness);
 
     if (existness) {
