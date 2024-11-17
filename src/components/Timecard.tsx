@@ -5,6 +5,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import Face5Icon from "@mui/icons-material/Face5";
 import Button from "@mui/material/Button";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import Link from "next/link";
 
 interface TimecardProps {
   origin: string;
@@ -13,6 +14,7 @@ interface TimecardProps {
   date: string;
   time: string;
   price: string;
+  
 }
 
 const Timecard: React.FC<TimecardProps> = ({
@@ -89,6 +91,8 @@ const Timecard: React.FC<TimecardProps> = ({
           </Box>
           <Box sx={{ display: "inline-flex", alignItems: "center" }}>
             <Button
+              LinkComponent={Link}
+              href={`/post/`} 
               variant="contained"
               sx={{ marginTop: "-20px", marginLeft: "20px" }}
             >
