@@ -8,11 +8,10 @@ import { TextField, Box, Button, Typography } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 import { join } from "path/win32";
 
-const Page = ({ session }: { session: string | null }) => {
-  const userSessionId = useUserSession(session);
+const Login = ({ session }: { session: string | null }) => {
+  const userSessionId = useUserSession(session).userUid;
 
   const handleSignIn = async () => {
-    console.log("\n\n\n\ngoogle sign in is failing!!!1");
     if (userSessionId != null) return;
 
     const userUid = await signInWithGoogle();
@@ -85,11 +84,10 @@ const Page = ({ session }: { session: string | null }) => {
             Sign in with Google
           </Typography>
         </Button>
-        <button onClick={handleSignIn}> sign in </button>
-        User session ID {userSessionId}
+        {/* User session ID {userSessionId} */}
       </Box>
     </Box>
   );
 };
 
-export default Page;
+export default Login;

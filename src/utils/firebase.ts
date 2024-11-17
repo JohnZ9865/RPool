@@ -47,6 +47,34 @@ export function onAuthStateChanged(callback: (authUser: User | null) => void) {
   return _onAuthStateChanged(firebaseAuth, callback);
 }
 
+export async function findUserIdByEmail(
+  targetEmail: string,
+): Promise<string | null> {
+  try {
+    // Reference to the "users" collection
+    const usersCollection = collection(db, "users");
+
+    // Create a query to find the document with the matching email
+    const q = query(usersCollection, where("email", "==", targetEmail));
+
+    // Execute the query
+    const querySnapshot = await getDocs(q);
+
+    // Check if a document was found
+    if (!querySnapshot.empty) {
+      // Assuming only one document will match the query
+      const doc = querySnapshot.docs[0];
+      return doc.id; // Return the document's ID
+    }
+
+    // If no document is found, return null
+    return null;
+  } catch (error) {
+    console.error("Error finding user by email:", error);
+    throw new Error("Failed to find user by email");
+  }
+}
+
 export const doesEmailExist = async (targetEmail: string): Promise<boolean> => {
   try {
     const usersRef = collection(db, "users");
@@ -75,7 +103,7 @@ export async function signInWithGoogle() {
 
     if (existness) {
       //directs to home
-      window.location.href = "/account";
+      window.location.href = "/home";
     } else {
       //redirect to /signup page.
       window.location.href = "/signup";
