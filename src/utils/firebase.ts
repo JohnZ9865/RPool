@@ -91,12 +91,10 @@ export const doesEmailExist = async (targetEmail: string): Promise<boolean> => {
 //enter name + email + id. So create a doc. Store the id in the doc too.
 const createUserDocument = async (name, email, photoURL) => {
   try {
-    const db = getFirestore(); // Initialize Firestore
     const userRef = doc(collection(db, "users")); // Create a new document reference in 'users'
     const docId = userRef.id; // Get the auto-generated document ID
 
     console.log("our newly created ID", docId, "endID");
-    await new Promise((resolve) => setTimeout(resolve, 70000));
 
     // Set the document with the provided attributes, including the ID
     await setDoc(userRef, {
@@ -117,29 +115,39 @@ export async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
 
   try {
+    console.log("\n\n\nwere we evef here????");
     const result = await signInWithPopup(firebaseAuth, provider);
-    // console.log("our result when trying to sign in", result, "end result");
+    console.log("our result when trying to sign in", result, "end result");
 
     // await new Promise(resolve => setTimeout(resolve, 70000));
     if (!result || !result.user) {
       throw new Error("Google sign in failed");
     }
+
+    console.log("are we proceeding???");
+
+    console.log("restult", result);
+
     const targetEmail = result.user.email;
-    const existness = await doesEmailExist(targetEmail);
+    console.log("still working", targetEmail);
+
+    // const existness = await doesEmailExist(targetEmail);
+    const existness = false;
+    console.log("existness statement", existness);
 
     if (existness) {
       //directs to home
+
+      window.location.href = "/home";
+    } else {
       const photoURL = result.user.photoURL;
       const email = result.user.email;
       const name = result.user.displayName;
 
-      await new Promise((resolve) => setTimeout(resolve, 50000));
-      console.log("right before createUserDocument");
-      createUserDocument(name, email, photoURL);
-
-      window.location.href = "/home";
-    } else {
+      console.log("create iser documentttt nowww");
+      await createUserDocument(name, email, photoURL);
       //redirect to /signup page.
+      console.log("make user", result);
       window.location.href = "/signup";
     }
 

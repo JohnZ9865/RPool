@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Box, AppBar, Toolbar, Typography, IconButton, CircularProgress } from "@mui/material";
+import {
+  Box,
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Link from "next/link";
 import Timecard from "@/components/Timecard";
@@ -52,9 +59,9 @@ const Page = () => {
       <AppBar
         position="static"
         sx={{
-          background: 'linear-gradient(to right, #1976d2, #FFEB3B)',  // Blue to Yellow gradient
-          color: 'white',  // White text
-          fontFamily: "'Roboto', sans-serif",  // Set a nice font from Google Fonts
+          background: "linear-gradient(to right, #1976d2, #FFEB3B)", // Blue to Yellow gradient
+          color: "white", // White text
+          fontFamily: "'Roboto', sans-serif", // Set a nice font from Google Fonts
         }}
       >
         <Toolbar
@@ -89,7 +96,14 @@ const Page = () => {
       </AppBar>
 
       {/* Main Content */}
-      <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         {/* This section is blank for now */}
       </Box>
     </Box>
