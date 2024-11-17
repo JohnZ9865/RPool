@@ -31,7 +31,10 @@ import { api } from "@/utils/api";
 import { ExpectedInputAddPostInput } from "../api/post/add/route";
 import { useUserSession } from "@/hooks/useSession";
 import { ServiceSummary } from "../api/types/uber";
-import { EstimationExpectedInput, EstimationExpectedOutput } from "../api/estimation/route";
+import {
+  EstimationExpectedInput,
+  EstimationExpectedOutput,
+} from "../api/estimation/route";
 import { useRouter } from "next/navigation";
 
 const libraries: Library[] = ["places"];
@@ -135,7 +138,9 @@ const EditRideDetails = () => {
     e.preventDefault();
     try {
       setIsSaving(true);
-      const costSelected = costEstimate.find((serviceSummary) => serviceSummary.name === selectedService);
+      const costSelected = costEstimate.find(
+        (serviceSummary) => serviceSummary.name === selectedService,
+      );
       const dateToSend: ExpectedInputAddPostInput = {
         ownerId: firestoreId,
         title: formState.title,
@@ -298,7 +303,10 @@ const EditRideDetails = () => {
                         type="datetime-local"
                         value={formatDateTimeForInput(formState.departureTime)}
                         onChange={(e) => {
-                          handleChangeDateTime("departure", new Date(e.target.value))
+                          handleChangeDateTime(
+                            "departure",
+                            new Date(e.target.value),
+                          );
                         }}
                         InputLabelProps={{
                           shrink: true,
@@ -313,11 +321,12 @@ const EditRideDetails = () => {
                         fullWidth
                         label="Arrival Time"
                         type="datetime-local"
-                        value={formatDateTimeForInput(
-                          formState.arrivalTime
-                        )}
+                        value={formatDateTimeForInput(formState.arrivalTime)}
                         onChange={(e) =>
-                          handleChangeDateTime("arrival", new Date(e.target.value))
+                          handleChangeDateTime(
+                            "arrival",
+                            new Date(e.target.value),
+                          )
                         }
                         InputLabelProps={{
                           shrink: true,
@@ -328,66 +337,88 @@ const EditRideDetails = () => {
                 </Grid>
 
                 <Box sx={{ mb: 3 }}>
-                  <Typography variant="h6" sx={{ mb: 2 }}>Available Ride Options</Typography>
-                  <Box sx={{
-                    display: "flex",
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    gap: 2,
-                  }}>
+                  <Typography variant="h6" sx={{ mb: 2 }}>
+                    Available Ride Options
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: { xs: "column", sm: "row" },
+                      gap: 2,
+                    }}
+                  >
                     {costEstimate?.map((serviceSummary) => (
-                      <Card 
+                      <Card
                         sx={{
                           flex: 1,
-                          minWidth: { xs: '100%', sm: '150px' },
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease-in-out',
-                          transform: selectedService === serviceSummary.name ? 'scale(1.02)' : 'scale(1)',
-                          border: selectedService === serviceSummary.name ? '2px solid #1976d2' : '1px solid #e0e0e0',
-                          '&:hover': {
-                            boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
-                            transform: 'scale(1.02)',
+                          minWidth: { xs: "100%", sm: "150px" },
+                          cursor: "pointer",
+                          transition: "all 0.2s ease-in-out",
+                          transform:
+                            selectedService === serviceSummary.name
+                              ? "scale(1.02)"
+                              : "scale(1)",
+                          border:
+                            selectedService === serviceSummary.name
+                              ? "2px solid #1976d2"
+                              : "1px solid #e0e0e0",
+                          "&:hover": {
+                            boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
+                            transform: "scale(1.02)",
                           },
                         }}
                         key={serviceSummary.name}
                         onClick={() => setSelectedService(serviceSummary.name)}
-                        elevation={selectedService === serviceSummary.name ? 4 : 1}
+                        elevation={
+                          selectedService === serviceSummary.name ? 4 : 1
+                        }
                       >
-                        <CardContent sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          textAlign: 'center',
-                          p: 3,
-                        }}>
-                          <Typography 
-                            variant="h6" 
+                        <CardContent
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            p: 3,
+                          }}
+                        >
+                          <Typography
+                            variant="h6"
                             sx={{
                               mb: 2,
-                              color: selectedService === serviceSummary.name ? 'primary.main' : 'text.primary',
+                              color:
+                                selectedService === serviceSummary.name
+                                  ? "primary.main"
+                                  : "text.primary",
                               fontWeight: 600,
                             }}
                           >
                             {serviceSummary.name}
                           </Typography>
-                          
-                          <Typography 
-                            variant="h5" 
-                            sx={{ 
-                              fontWeight: 'bold',
-                              color: selectedService === serviceSummary.name ? 'primary.main' : 'text.primary',
+
+                          <Typography
+                            variant="h5"
+                            sx={{
+                              fontWeight: "bold",
+                              color:
+                                selectedService === serviceSummary.name
+                                  ? "primary.main"
+                                  : "text.primary",
                             }}
                           >
                             ${serviceSummary.pricing.totalFare}
                           </Typography>
 
                           {selectedService === serviceSummary.name && (
-                            <Box sx={{ 
-                              mt: 2,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              color: 'primary.main'
-                            }}>
+                            <Box
+                              sx={{
+                                mt: 2,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "primary.main",
+                              }}
+                            >
                               <Typography variant="body2">
                                 ✓ Selected
                               </Typography>
