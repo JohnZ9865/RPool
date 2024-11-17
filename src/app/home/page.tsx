@@ -74,7 +74,7 @@ const Page = () => {
           {/* Title centered */}
           <Typography
             variant="h4"
-            sx={{ textAlign: "center", fontWeight: "bold", flexGrow: 1 }}
+            sx={{ ml: 4, textAlign: "center", fontWeight: "bold", flexGrow: 1 }}
           >
             R' Pool
           </Typography>
@@ -101,10 +101,125 @@ const Page = () => {
           flexGrow: 1,
           display: "flex",
           justifyContent: "center",
-          alignItems: "center",
+          alignItems: "flex-start",
+          flexDirection: "column",
+          padding: 2,
+          backgroundColor: "white",
         }}
       >
-        {/* This section is blank for now */}
+        {posts.allPosts.length === 0 ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              height: "1vh",
+            }}
+          >
+            <Box sx={{ marginLeft: 85 }}>
+              <CircularProgress />
+            </Box>
+
+            <Typography variant="h6" sx={{ marginLeft: 85 }}>
+              Loading posts...
+            </Typography>
+          </Box>
+        ) : (
+          <>
+            {/* Current Groups Section */}
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: "1200px",
+                margin: "0 auto",
+                marginTop: 4,
+                backgroundColor: "white",
+                borderRadius: "8px",
+                padding: 2,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: "bold", marginBottom: 2 }}
+              >
+                Current Groups
+              </Typography>
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", // Responsive grid
+                  gap: 3,
+                  marginTop: 2,
+                }}
+              >
+                {posts.userIsPassenger.map((post, index) => (
+                  <Box key={index}>
+                    <Timecard
+                      origin={post.originName}
+                      destination={post.destinationName}
+                      availableSeats={post.totalSeats.toString()}
+                      date={formatDateTime(post.arrivalTime.seconds)}
+                      time={post.totalSeats.toString()}
+                      price={
+                        "$" + (post.totalCost / post.totalSeats).toString()
+                      }
+                    />
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+
+            {/* Available Groups Section */}
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: "1200px",
+                margin: "0 auto",
+                marginTop: 6,
+                backgroundColor: "white",
+                borderRadius: "8px",
+                padding: 2,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: "bold", marginBottom: 2 }}
+              >
+                Available Groups
+              </Typography>
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", // Responsive grid
+                  gap: 3,
+                  marginTop: 2,
+                }}
+              >
+                {posts.allPosts.map((post, index) => (
+                  <Box key={index}>
+                    <Timecard
+                      origin={post.originName}
+                      destination={post.destinationName}
+                      availableSeats={post.totalSeats.toString()}
+                      date={formatDateTime(post.arrivalTime.seconds)}
+                      time={post.totalSeats.toString()}
+                      price={
+                        "$" + (post.totalCost / post.totalSeats).toString()
+                      }
+                    />
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          </>
+        )}
       </Box>
     </Box>
   );
