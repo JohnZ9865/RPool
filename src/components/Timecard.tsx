@@ -30,8 +30,9 @@ const Timecard: React.FC<TimecardProps> = ({
       <Box
         sx={{
           width: 300,
-          height: 220,
+          height: 'fit-content',
           borderRadius: 8,
+          padding: 2,
           bgcolor: "gold",
           border: "2px solid black",
           "&:hover": {
